@@ -1,0 +1,14 @@
+name: CI
+
+on: [push]
+
+jobs:
+  Build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v1    
+    - name: Build with MSBuild
+      run: |
+        & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe"
