@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BE102A55-93B1-4417-A812-197098A34017}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CommunalServices.Communication</RootNamespace>
+    <AssemblyName>CommunalServices.Communication</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GISGKH_Lib">
+      <HintPath>..\..\common\GISGKH_Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="API\ApiResult.cs" />
+    <Compile Include="API\ApiResultBase.cs" />
+    <Compile Include="API\DebtAPI.cs" />
+    <Compile Include="API\DevicesAPI.cs" />
+    <Compile Include="API\ExportAccountsRes.cs" />
+    <Compile Include="API\ExportContractResult.cs" />
+    <Compile Include="API\ExportDeviceRes.cs" />
+    <Compile Include="API\ExportHouseRes.cs" />
+    <Compile Include="API\ExportNsiRes.cs" />
+    <Compile Include="API\ExportPkzRes.cs" />
+    <Compile Include="API\GetAppealsRes.cs" />
+    <Compile Include="API\GisAPI.cs" />
+    <Compile Include="API\GKHService.cs" />
+    <Compile Include="API\ImportPkzRes.cs" />
+    <Compile Include="API\NsiDataApi.cs" />
+    <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\Appeal.cs" />
+    <Compile Include="Data\DatabaseParams.cs" />
+    <Compile Include="Data\DB.cs" />
+    <Compile Include="Data\MDevice.cs" />
+    <Compile Include="Data\NsiItem.cs" />
+    <Compile Include="Data\Payment.cs" />
+    <Compile Include="Data\PkzEntry.cs" />
+    <Compile Include="Data\Premises.cs" />
+    <Compile Include="GisgkhServices.Debt\GKHDebtService.cs" />
+    <Compile Include="GisgkhUsl.cs" />
+    <Compile Include="GKH.Appeals\AppealsApi.cs" />
+    <Compile Include="GKH.Appeals\GKHAppealsService.cs" />
+    <Compile Include="Kvit.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports.cs" />
+    <Compile Include="SignatureHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Library\Library.csproj">
+      <Project>{ee1dc57a-344a-4b0a-82ce-5fd328c14894}</Project>
+      <Name>Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GisgkhServices.Debt\export.bat" />
+    <None Include="GisgkhServices.Debt\GKHDebtService.config" />
+    <None Include="GKH.Appeals\export.bat" />
+    <None Include="GKH.Appeals\GKHAppealsService.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
