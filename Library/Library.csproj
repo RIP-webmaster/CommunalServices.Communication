@@ -94,11 +94,11 @@
     </Reference>
     <Reference Include="CryptoPro.Sharpei.Base, Version=1.4.0.10, Culture=neutral, PublicKeyToken=473b8c5086e795f5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\CryptoPro.Sharpei.Base\v4.0_1.4.0.10__473b8c5086e795f5\CryptoPro.Sharpei.Base.dll</HintPath>
+      <HintPath>..\Lib\CryptoPro.Sharpei.Base.dll</HintPath>
     </Reference>
     <Reference Include="CryptoPro.Sharpei.Xml, Version=1.4.0.10, Culture=neutral, PublicKeyToken=473b8c5086e795f5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\CryptoPro.Sharpei.Xml\v4.0_1.4.0.10__473b8c5086e795f5\CryptoPro.Sharpei.Xml.dll</HintPath>
+      <HintPath>..\Lib\CryptoPro.Sharpei.Xml.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
