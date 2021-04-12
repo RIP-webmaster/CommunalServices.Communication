@@ -229,6 +229,8 @@ FROM appeals ORDER BY date_created DESC", con);
         {
             string ret = text.Replace("&lt;br&gt;", "<br/>");
             ret = ret.Replace("&amp;nbsp;", "&nbsp;");
+            ret = ret.Replace("&lt;div&gt;", "<div>");
+            ret = ret.Replace("&lt;/div&gt;", "</div>");
             return ret;
         }
 
@@ -237,6 +239,8 @@ FROM appeals ORDER BY date_created DESC", con);
             string ret = text.Replace("<br>", Environment.NewLine);
             ret = ret.Replace("<br/>", Environment.NewLine);
             ret = ret.Replace("&nbsp;", " ");
+            ret = ret.Replace("<div>", Environment.NewLine);
+            ret = ret.Replace("</div>", Environment.NewLine);
             return ret;
         }
 
