@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CommunalServices.Communication.Data;
 using GisgkhServices.Debt;
 
 namespace GISGKHIntegration
@@ -37,12 +38,17 @@ namespace GISGKHIntegration
                 DateTime t_start = DateTime.Now.Subtract(TimeSpan.FromDays(5*30));
 
                 var request = new exportDSRsRequest();
-                request.Id = "signed-data-container";
+                request.Id = "signed-data-container"; 
+                request.includeResponses = true;
+                request.includeResponsesSpecified = true;
                 request.Items = new object[] { new Period(){
                         startDate = t_start,
                         endDate = t_end
-                    }};
-                request.ItemsElementName = new ItemsChoiceType3[] { ItemsChoiceType3.periodOfSendingRequest };
+                    },RequestStatusType.Sent};
+
+                request.ItemsElementName = new ItemsChoiceType3[] { 
+                    ItemsChoiceType3.periodOfSendingRequest,
+                    ItemsChoiceType3.requestStatus };
                 
                 try
                 {
@@ -89,14 +95,15 @@ namespace GISGKHIntegration
             }//end lock
         }
 
-        public static ApiResult ExportDebtRequests_Check(string message_guid, string orgPPAGUID)
+        public static ExportDebtApiResult ExportDebtRequests_Check(string message_guid, string orgPPAGUID)
         {
             lock (GisAPI.csLock)
             {
                 GisAPI.LastRequest = ""; GisAPI.LastResponce = "";
                 var proxy = new DebtRequestsAsyncPortClient("DebtRequestsAsyncPort");
                 {
-                    var apires = new ApiResult();
+                    var apires = new ExportDebtApiResult();
+                    List<DebtRequest> requests = new List<DebtRequest>();
                     //формирование входных параметров запроса
 
                     RequestHeader hdr = new RequestHeader();//заголовок запроса
@@ -172,18 +179,16 @@ namespace GISGKHIntegration
                                     {
                                         for (int i = 0; i < dsr.subrequestData.Length; i++)
                                         {
+                                            DebtRequest debtRequest = new DebtRequest();
                                             sb.AppendLine("subrequestData #"+i.ToString());
                                             sb.AppendLine(dsr.subrequestData[i].subrequestGUID);
+                                            debtRequest.SubrequestGUID = dsr.subrequestData[i].subrequestGUID;
                                             sb.AppendLine("Organisation: " + dsr.subrequestData[i].requestInfo.organization.name);
                                             sb.AppendLine("Request number: " + dsr.subrequestData[i].requestInfo.requestNumber);
+                                            debtRequest.Number = dsr.subrequestData[i].requestInfo.requestNumber;
                                             sb.AppendLine("Sent: " + dsr.subrequestData[i].requestInfo.sentDate.ToString());
                                             sb.AppendLine("Status: " + dsr.subrequestData[i].requestInfo.status.ToString());
-
-                                            if (dsr.subrequestData[i].requestInfo.executorInfo != null)
-                                            {
-                                                sb.AppendLine("Executor: " + dsr.subrequestData[i].requestInfo.executorInfo.fio);
-                                            }
-
+                                                                                
                                             var hfo = dsr.subrequestData[i].requestInfo.housingFundObject;
 
                                             if (hfo == null) 
@@ -191,8 +196,41 @@ namespace GISGKHIntegration
 
                                             sb.AppendLine("Address: " + hfo.address);
                                             sb.AppendLine("Address details: " + hfo.addressDetails);
+                                            debtRequest.HouseAddress = hfo.address;
+                                            debtRequest.HouseGUID = hfo.fiasHouseGUID;
+                                            debtRequest.HouseNkv = hfo.addressDetails;
+
+                                            if (dsr.subrequestData[i].responseData != null &&
+                                                dsr.subrequestData[i].responseData.executorInfo != null)
+                                            {
+                                                //responded
+                                                sb.AppendLine("Responder FIO: " + dsr.subrequestData[i].responseData.executorInfo.fio);
+
+                                                sb.AppendLine("Responder GUID: " +
+                                                    dsr.subrequestData[i].responseData.executorInfo.GUID.ToString());
+                                            }
+                                            else
+                                            {
+                                                requests.Add(debtRequest);
+                                            }
+
                                             sb.AppendLine();
                                         }//end for
+                                    }
+                                }
+                                else if (item is CommonResultType)
+                                {
+                                    var crt = (CommonResultType)item;
+                                    sb.AppendLine("* CommonResultType *");
+                                    sb.AppendLine("GUID: "+crt.GUID);
+                                    sb.AppendLine("TransportGUID: " + crt.TransportGUID);
+
+                                    if (crt.Items != null)
+                                    {
+                                        foreach (var innerItem in crt.Items)
+                                        {
+                                            sb.AppendLine("-"+item.GetType().ToString());
+                                        }
                                     }
                                 }
                                 else if (item is ErrorMessageType)
@@ -206,10 +244,15 @@ namespace GISGKHIntegration
                                 else sb.AppendLine(item.GetType().ToString());
                             }//end foreach
 
+                        if (result != null && result.Items != null)
+                        {
+                            sb.AppendLine("Items: " + result.Items.Length);
+                        }
 
                         sb.AppendLine("Дата и время запроса: " + apires.date_query);
                         sb.AppendLine("Длительность обработки запроса: " + (apires.query_duration).ToString("F3") + " c.");
                         apires.text = sb.ToString();
+                        apires.Requests = requests.ToArray();
 
                         return apires;
                     }
@@ -221,5 +264,91 @@ namespace GISGKHIntegration
                 }
             }//end lock
         }
+
+        public static ApiResult ImportDebtResponces_Begin(string orgPPAGUID, DebtRequest[] requests,string executorGuid)
+        {
+            lock (GisAPI.csLock)
+            {
+                GisAPI.LastRequest = ""; GisAPI.LastResponce = "";
+                var proxy = new DebtRequestsAsyncPortClient("DebtRequestsAsyncPort");
+                ApiResult apires = new ApiResult();
+
+                //формирование входных параметров запроса
+
+                RequestHeader hdr = new RequestHeader();//заголовок запроса
+
+                hdr.Date = DateTime.Now;
+                hdr.MessageGUID = Guid.NewGuid().ToString();
+                hdr.ItemElementName = ItemChoiceType.orgPPAGUID;
+                hdr.Item = orgPPAGUID;
+
+                hdr.IsOperatorSignature = true;
+                hdr.IsOperatorSignatureSpecified = true;
+
+                //period ~= 5 month
+                DateTime t_end = DateTime.Now;
+                DateTime t_start = DateTime.Now.Subtract(TimeSpan.FromDays(5 * 30));
+
+                var request = new importDSRResponsesRequest();
+                request.Id = "signed-data-container";
+
+                var actions = new List<importDSRResponsesRequestAction>();
+                for (int i = 0; i < requests.Length; i++)
+                {
+                    importDSRResponsesRequestAction act = new importDSRResponsesRequestAction();
+                    act.subrequestGUID = requests[i].SubrequestGUID;
+                    act.TransportGUID = Guid.NewGuid().ToString();
+                    act.actionType = DSRResponseActionType.Send;
+                    act.responseData = new ImportDSRResponseType();
+                    act.responseData.hasDebt = false;
+                    act.responseData.executorGUID = executorGuid;
+                    actions.Add(act);
+                }
+
+                request.action = actions.ToArray();
+
+                try
+                {
+                    long t1 = Environment.TickCount;
+                    AckRequest ack;
+
+                    //Отправка запроса                    
+                    var res = proxy.importResponses(hdr, request, out ack);
+
+                    long t2 = Environment.TickCount;
+                    apires.in_xml = GisAPI.LastRequest;
+                    apires.out_xml = GisAPI.LastResponce;
+                    apires.query_duration = (t2 - t1) / 1000.0M;
+                    apires.date_query = DateTime.Now;
+
+                    StringBuilder sb = new StringBuilder(300);
+
+                    if (res == null) { apires.text = ("service returned null"); return apires; }
+
+                    var resAck = ack.Ack;
+                    apires.messageGUID = resAck.MessageGUID;
+                    sb.AppendLine("RequesterMessageGUID: " + resAck.RequesterMessageGUID);
+                    sb.AppendLine("MessageGUID: " + resAck.MessageGUID);
+
+                    sb.AppendLine("Дата и время запроса: " + apires.date_query);
+                    sb.AppendLine("Длительность обработки запроса: " + (apires.query_duration).ToString("F3") + " c.");
+                    apires.text = sb.ToString();
+
+                    return apires;
+                }
+                catch (Exception exc)
+                {
+                    ApiResultBase.InitExceptionResult(apires, "ImportDebtResponces", exc);
+                    return apires;
+                }
+                finally
+                {
+                    try { proxy.Close(); }
+                    catch (Exception) { }
+                }
+
+            }//end lock
+        }
+
     }
 }

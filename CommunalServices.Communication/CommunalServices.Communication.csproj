@@ -66,11 +66,14 @@
     <Compile Include="Data\Appeal.cs" />
     <Compile Include="Data\DatabaseParams.cs" />
     <Compile Include="Data\DB.cs" />
+    <Compile Include="Data\DB_LS.cs" />
+    <Compile Include="Data\DebtRequest.cs" />
     <Compile Include="Data\MDevice.cs" />
     <Compile Include="Data\NsiItem.cs" />
     <Compile Include="Data\Payment.cs" />
     <Compile Include="Data\PkzEntry.cs" />
     <Compile Include="Data\Premises.cs" />
+    <Compile Include="API\ExportDebtApiResult.cs" />
     <Compile Include="GisgkhServices.Debt\GKHDebtService.cs" />
     <Compile Include="GisgkhUsl.cs" />
     <Compile Include="GKH.Appeals\AppealsApi.cs" />
