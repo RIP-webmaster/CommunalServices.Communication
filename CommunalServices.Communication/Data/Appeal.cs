@@ -176,6 +176,27 @@ FROM appeals ORDER BY date_created DESC", con);
             }
         }
 
+        public static string GetDestinationEMail(int k_post)
+        {
+            SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(
+                DatabaseParams.curr.ConnectionString);
+            b.InitialCatalog = "RIPO_UK";
+
+            SqlConnection con = new SqlConnection(b.ConnectionString);
+
+            object val;
+            con.Open();
+            using (con)
+            {
+                SqlCommand cmd;
+                cmd = new SqlCommand(@"SELECT appeal_email FROM DataProviders WHERE k_post=@k_post", con);
+                cmd.Parameters.AddWithValue("k_post", k_post);
+                val = cmd.ExecuteScalar();
+                if (val == null || val == DBNull.Value) val = String.Empty;//normalize
+                return val.ToString();
+            }
+        }
+
         public string GetRecipientName()
         {
             SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(
@@ -191,6 +212,27 @@ FROM appeals ORDER BY date_created DESC", con);
                 SqlCommand cmd;
                 cmd = new SqlCommand(@"SELECT name FROM DataProviders WHERE k_post=@k_post", con);
                 cmd.Parameters.AddWithValue("k_post", this.OrgCode);
+                val = cmd.ExecuteScalar();
+                if (val == null || val == DBNull.Value) val = String.Empty;//normalize
+                return val.ToString();
+            }
+        }
+
+        public static string GetRecipientName(int k_post)
+        {
+            SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(
+                DatabaseParams.curr.ConnectionString);
+            b.InitialCatalog = "RIPO_UK";
+
+            SqlConnection con = new SqlConnection(b.ConnectionString);
+
+            object val;
+            con.Open();
+            using (con)
+            {
+                SqlCommand cmd;
+                cmd = new SqlCommand(@"SELECT name FROM DataProviders WHERE k_post=@k_post", con);
+                cmd.Parameters.AddWithValue("k_post", k_post);
                 val = cmd.ExecuteScalar();
                 if (val == null || val == DBNull.Value) val = String.Empty;//normalize
                 return val.ToString();
