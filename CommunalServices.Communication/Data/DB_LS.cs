@@ -13,6 +13,20 @@ namespace CommunalServices.Communication.Data
     {
         public static DolgData[] GetDolgData(string houseGuid, string t_nomer_kv, int god, int mes)
         {
+            if (t_nomer_kv.StartsWith("ком."))
+            {
+                t_nomer_kv = t_nomer_kv.Replace("ком.", string.Empty).Trim();
+            }
+            else if (t_nomer_kv.Contains("ком."))
+            {
+                int index = t_nomer_kv.IndexOf("ком.");
+
+                if (index >= 2)
+                {
+                    t_nomer_kv = t_nomer_kv.Substring(0, index).Trim();
+                }
+            }
+
             List<DolgData> ret = new List<DolgData>();
             SqlConnection con = new SqlConnection(DatabaseParams.curr.ConnectionString);
             con.Open();

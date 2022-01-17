@@ -41,14 +41,14 @@ namespace CommunalServices.Communication.Data
             sb.Append("|Номер запроса  |");
             sb.Append("Адрес                              |");
             sb.Append("ЛС      |");
-            sb.Append("ФИО                                |");
+            sb.Append("ФИО                           |");
             sb.Append("Долг      |");
             sb.AppendLine();
 
             sb.Append("|---------------|");
             sb.Append("-----------------------------------|");
             sb.Append("--------|");
-            sb.Append("-----------------------------------|");
+            sb.Append("------------------------------|");
             sb.Append("----------|");
             sb.AppendLine();
 
@@ -66,7 +66,6 @@ namespace CommunalServices.Communication.Data
                     sb.Append(addr.PadRight(35, ' ') + "|");
                     sb.Append("(Нет ЛС)|");
                     sb.AppendLine();
-                    continue;
                 }
 
                 bool has_dolg = false;
@@ -75,7 +74,7 @@ namespace CommunalServices.Communication.Data
                 {
                     for (int j = 0; j < dolgdata.Length; j++)
                     {
-                        if (dolgdata[j].Sum > 0.0M)
+                        if (dolgdata[j].Sum > 1000.0M)
                         {
                             has_dolg = true; break;
                         }
@@ -99,7 +98,7 @@ namespace CommunalServices.Communication.Data
 
                     sb.Append(addr.PadRight(35, ' ') + "|");
                     sb.Append(dolgdata[j].k_s4.ToString().PadLeft(8, ' ') + "|");
-                    sb.Append(dolgdata[j].FIO.PadRight(35, ' ') + "|");
+                    sb.Append(dolgdata[j].FIO.PadRight(30, ' ') + "|");
                     sb.Append(dolgdata[j].Sum.ToString().PadLeft(10, ' ') + "|");
                     sb.AppendLine();
                 }
@@ -133,6 +132,53 @@ namespace CommunalServices.Communication.Data
                 if (val == null || val == DBNull.Value) val = String.Empty;//normalize
                 return val.ToString().ToLower();
             }
+        }
+
+        public static string GetMailMessage(string content)
+        {
+            StringBuilder sb = new StringBuilder(500);
+            sb.Append("<p>Здравствуйте. По вашей организации в ГИС ЖКХ размещены запросы о наличии задолженности ");
+            sb.Append("за жилищно-коммунальные услуги, ");
+            sb.Append("подтвержденной судебным актом. Просим предоставить информацию по адресам, перечисленным ");
+            sb.Append("ниже в графе &quot;с долгами&quot;. ");
+            sb.AppendLine("</p> ");
+            sb.AppendLine();
+            sb.Append("<pre>");
+            sb.Append(content);
+            sb.Append("</pre><br/>");
+            sb.AppendLine();
+            sb.AppendLine("<hr/>");
+            sb.Append("<p>Письмо отправлено автоматически с помощью программного обеспечения GISGKH Integration ");
+            sb.Append("(ООО &quot;Расчеты и платежи&quot;). Если вы не хотите получать уведомления о запросах в ГИС ЖКХ, ");
+            sb.AppendLine("сообщите об этом, ответив на данное письмо.</p>");
+            return sb.ToString();
+        }
+
+        public static Tuple<int, string>[] GetOrganisations()
+        {
+            SqlConnection con = new SqlConnection(DatabaseParams.curr.ConnectionString);
+            con.Open();
+
+            List<Tuple<int, string>> res = new List<Tuple<int, string>>(100);
+            Tuple<int, string> item;
+
+            SqlCommand cmd = new SqlCommand(
+                @"SELECT k_post,orgPPAGUID FROM ripo_uk.dbo.DataProviders WHERE k_post<>0 AND employeeGUID IS NOT NULL",
+                con);
+
+            SqlDataReader rd = cmd.ExecuteReader();
+
+            using (rd)
+            {
+                while (true)
+                {
+                    if (rd.Read() == false) break;
+                    item = new Tuple<int, string>(Convert.ToInt32(rd["k_post"]), rd["OrgPPAGUID"].ToString());
+                    res.Add(item);
+                }
+            }
+
+            return res.ToArray();
         }
 
     }

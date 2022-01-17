@@ -13,7 +13,7 @@ namespace GISGKHIntegration
 {
     public static class DebtAPI
     {
-        public static ApiResult ExportDebtRequests_Begin(string orgPPAGUID)
+        public static ApiResult ExportDebtRequests_Begin(string orgPPAGUID, string pageGuid)
         {
             lock (GisAPI.csLock)
             {
@@ -38,17 +38,33 @@ namespace GISGKHIntegration
                 DateTime t_start = DateTime.Now.Subtract(TimeSpan.FromDays(5*30));
 
                 var request = new exportDSRsRequest();
-                request.Id = "signed-data-container"; 
-                request.includeResponses = true;
-                request.includeResponsesSpecified = true;
-                request.Items = new object[] { new Period(){
+                request.Id = "signed-data-container";
+
+                if (!string.IsNullOrEmpty(pageGuid))
+                {
+                    request.Items = new object[] { new Period(){
                         startDate = t_start,
                         endDate = t_end
-                    },RequestStatusType.Sent};
+                    },ResponseStatusType.NotSent,pageGuid};
 
-                request.ItemsElementName = new ItemsChoiceType3[] { 
-                    ItemsChoiceType3.periodOfSendingRequest,
-                    ItemsChoiceType3.requestStatus };
+                    request.ItemsElementName = new ItemsChoiceType3[] { 
+                     ItemsChoiceType3.periodOfSendingRequest,
+                     ItemsChoiceType3.responseStatus,
+                     ItemsChoiceType3.exportSubrequestGUID
+                    };
+                }
+                else
+                {
+                    request.Items = new object[] { new Period(){
+                        startDate = t_start,
+                        endDate = t_end
+                    },ResponseStatusType.NotSent};
+
+                    request.ItemsElementName = new ItemsChoiceType3[] { 
+                     ItemsChoiceType3.periodOfSendingRequest,
+                     ItemsChoiceType3.responseStatus
+                    };
+                }
                 
                 try
                 {
@@ -173,6 +189,12 @@ namespace GISGKHIntegration
                                     if (dsr.pagedOutput != null)
                                     {
                                          sb.AppendLine("pagedOutput");
+
+                                         if (dsr.pagedOutput.Item is string)
+                                         {
+                                             sb.AppendLine("next: " + (string)dsr.pagedOutput.Item);
+                                             apires.NextPageGuid = (string)dsr.pagedOutput.Item;
+                                         }
                                     }
 
                                     if (dsr.subrequestData != null)
@@ -183,19 +205,15 @@ namespace GISGKHIntegration
                                             sb.AppendLine("subrequestData #"+i.ToString());
                                             sb.AppendLine(dsr.subrequestData[i].subrequestGUID);
                                             debtRequest.SubrequestGUID = dsr.subrequestData[i].subrequestGUID;
-                                            sb.AppendLine("Organisation: " + dsr.subrequestData[i].requestInfo.organization.name);
                                             sb.AppendLine("Request number: " + dsr.subrequestData[i].requestInfo.requestNumber);
                                             debtRequest.Number = dsr.subrequestData[i].requestInfo.requestNumber;
-                                            sb.AppendLine("Sent: " + dsr.subrequestData[i].requestInfo.sentDate.ToString());
-                                            sb.AppendLine("Status: " + dsr.subrequestData[i].requestInfo.status.ToString());
-                                                                                
+                                            
                                             var hfo = dsr.subrequestData[i].requestInfo.housingFundObject;
 
                                             if (hfo == null) 
                                                 hfo = new ExportHousingFundObjectInfoType() { address = "", addressDetails = "" };
 
-                                            sb.AppendLine("Address: " + hfo.address);
-                                            sb.AppendLine("Address details: " + hfo.addressDetails);
+                                            sb.AppendLine("Address: " + hfo.address +" "+hfo.addressDetails);
                                             debtRequest.HouseAddress = hfo.address;
                                             debtRequest.HouseGUID = hfo.fiasHouseGUID;
                                             debtRequest.HouseNkv = hfo.addressDetails;
