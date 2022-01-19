@@ -18,7 +18,7 @@ namespace CommunalServices.Communication.Data
         public string HouseNkv { get; set; }
         
         public static string ProcessRequests(DebtRequest[] requests, string title, int god, int mes, 
-            RequestsFilter filter, out DebtRequest[] result)
+            RequestsFilter filter, out DebtRequest[] result, int k_post)
         {
             List<DebtRequest> requests_selected = new List<DebtRequest>(requests.Length);
             StringBuilder sb = new StringBuilder(1000);
@@ -54,7 +54,7 @@ namespace CommunalServices.Communication.Data
 
             for (int i = 0; i < requests.Length; i++)
             {
-                DolgData[] dolgdata = DB_LS.GetDolgData(requests[i].HouseGUID, requests[i].HouseNkv, god, mes);
+                DolgData[] dolgdata = DB_LS.GetDolgData(requests[i].HouseGUID, requests[i].HouseNkv, god, mes, k_post);
 
                 if (dolgdata.Length == 0)
                 {

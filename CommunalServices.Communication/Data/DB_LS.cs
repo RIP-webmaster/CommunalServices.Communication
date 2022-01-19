@@ -11,8 +11,15 @@ namespace CommunalServices.Communication.Data
 {
     public static class DB_LS
     {
-        public static DolgData[] GetDolgData(string houseGuid, string t_nomer_kv, int god, int mes)
+        public static bool IsPostResource(int k_post)
         {
+            return k_post == 339 || k_post == 30 || k_post == 65;
+        }
+
+        public static DolgData[] GetDolgData(string houseGuid, string t_nomer_kv, int god, int mes, int k_post=0)
+        {
+            if (t_nomer_kv == null) t_nomer_kv = string.Empty;
+
             if (t_nomer_kv.StartsWith("ком."))
             {
                 t_nomer_kv = t_nomer_kv.Replace("ком.", string.Empty).Trim();
@@ -25,6 +32,11 @@ namespace CommunalServices.Communication.Data
                 {
                     t_nomer_kv = t_nomer_kv.Substring(0, index).Trim();
                 }
+            }
+
+            if (IsPostResource(k_post))
+            {
+                k_post = 0; //выделение долгов РСО не реализовано
             }
 
             List<DolgData> ret = new List<DolgData>();
@@ -43,12 +55,23 @@ FROM [ripo_uk].[dbo].[houses] INNER JOIN ripo.dbo.rls
 ON houses.street=rls.t_s5_name AND houses.nhouse=rls.t_dom 
 WHERE god=@god and mes=@mes and house_guid=@house_guid and t_nomer_kv=@t_nomer_kv";
 
+                if (k_post != 0)
+                {
+                    cmd.CommandText += " AND rls.k_s1upr=@k_post";
+                }
+
                 cmd.Connection = con;
                 cmd.CommandTimeout = 2 * 60;
                 cmd.Parameters.AddWithValue("house_guid", houseGuid);
                 cmd.Parameters.AddWithValue("t_nomer_kv", t_nomer_kv);
                 cmd.Parameters.AddWithValue("god", god);
                 cmd.Parameters.AddWithValue("mes", mes);
+
+                if (k_post != 0)
+                {
+                    cmd.Parameters.AddWithValue("k_post", k_post);
+                }
+
                 SqlDataReader rd = cmd.ExecuteReader();
 
                 while (true)
