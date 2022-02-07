@@ -5,17 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CommunalServices.Communication.Data;
 
 namespace GISGKHIntegration.Data
 {
     public class Payment
     {
-        public const int RS_ERROR = -1;
-        public const int RS_SENT = 0;
-        public const int RS_RECEIVED = 1;
-        public const int RS_PROCESSING = 2;
-        public const int RS_PROCESSED = 3;
-
         public const int IS_ERROR = -1;
         public const int IS_UNKNOWN = 0;
         public const int IS_SUCCESS = 1;
@@ -67,7 +62,7 @@ namespace GISGKHIntegration.Data
             b.AppendLine();
             switch (RequestState)
             {
-                case RS_ERROR: 
+                case RequestStates.RS_ERROR: 
                     b.AppendLine("При отправке запроса в ГИС ЖКХ произошла ошибка");
                     b.AppendLine(ErrorCode+": "+ErrorMessage);
                     if (StackTrace != null && StackTrace.Length > 0)
@@ -76,10 +71,10 @@ namespace GISGKHIntegration.Data
                         b.AppendLine(StackTrace);
                     }
                 break;
-                case RS_SENT: b.AppendLine("Отправлен запрос в ГИС ЖКХ"); break;
-                case RS_RECEIVED: b.AppendLine("Запрос получен ГИС ЖКХ"); break;
-                case RS_PROCESSING: b.AppendLine("Запрос в обработке ГИС ЖКХ"); break;
-                case RS_PROCESSED:
+                case RequestStates.RS_SENT: b.AppendLine("Отправлен запрос в ГИС ЖКХ"); break;
+                case RequestStates.RS_RECEIVED: b.AppendLine("Запрос получен ГИС ЖКХ"); break;
+                case RequestStates.RS_PROCESSING: b.AppendLine("Запрос в обработке ГИС ЖКХ"); break;
+                case RequestStates.RS_PROCESSED:
                     b.AppendLine("Запрос обработан ГИС ЖКХ");
                     switch (ImportState)
                     {

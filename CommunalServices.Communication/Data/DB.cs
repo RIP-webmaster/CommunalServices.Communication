@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
+using CommunalServices.Communication.Data;
 using GISGKHIntegration.Data;
 
 namespace GISGKHIntegration
@@ -1041,9 +1042,9 @@ WHERE [Pay_ID]=@Pay_ID",con);
 
             switch (RequestState)
             {
-                case Payment.RS_SENT: ErrorCode = "WAIT"; ErrorMessage = "Запрос отправлен"; break;
-                case Payment.RS_RECEIVED: ErrorCode = "WAIT"; ErrorMessage = "Запрос получен ГИСЖКХ"; break;
-                case Payment.RS_PROCESSING: ErrorCode = "WAIT"; ErrorMessage = "Запрос обрабатывается ГИСЖКХ"; break; 
+                case RequestStates.RS_SENT: ErrorCode = "WAIT"; ErrorMessage = "Запрос отправлен"; break;
+                case RequestStates.RS_RECEIVED: ErrorCode = "WAIT"; ErrorMessage = "Запрос получен ГИСЖКХ"; break;
+                case RequestStates.RS_PROCESSING: ErrorCode = "WAIT"; ErrorMessage = "Запрос обрабатывается ГИСЖКХ"; break; 
             }
             SqlConnection con = new SqlConnection(DatabaseParams.curr.ConnectionString);
             con.Open();
@@ -1061,9 +1062,9 @@ WHERE [Pay_ID]=@Pay_ID",con);
                 if (val == null || val == DBNull.Value) ImportState = 0;
                 else ImportState = Convert.ToInt32(val);
 
-                if (ImportState == Data.Payment.IS_AKTIR_WAIT && RequestState == Data.Payment.RS_ERROR)
+                if (ImportState == Data.Payment.IS_AKTIR_WAIT && RequestState == RequestStates.RS_ERROR)
                 {
-                    RequestState = Data.Payment.RS_PROCESSED;
+                    RequestState = RequestStates.RS_PROCESSED;
                 }
                 //***              
 

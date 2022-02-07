@@ -74,6 +74,7 @@
     <Compile Include="Data\PkzEntry.cs" />
     <Compile Include="Data\Premises.cs" />
     <Compile Include="API\ExportDebtApiResult.cs" />
+    <Compile Include="Data\RequestStates.cs" />
     <Compile Include="GisgkhServices.Debt\GKHDebtService.cs" />
     <Compile Include="GisgkhUsl.cs" />
     <Compile Include="GKH.Appeals\AppealsApi.cs" />

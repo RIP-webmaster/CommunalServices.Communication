@@ -5,8 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GISGKHIntegration;
 using System.Threading;
+using CommunalServices.Communication.Data;
+using GISGKHIntegration;
 
 namespace GKH.Appeals
 {
@@ -329,7 +330,7 @@ namespace GKH.Appeals
                 }
                 else
                 {
-                    if (res.RequestState == GISGKHIntegration.Data.Payment.RS_PROCESSED)
+                    if (res.RequestState == RequestStates.RS_PROCESSED)
                     {
                         break;
                     }
