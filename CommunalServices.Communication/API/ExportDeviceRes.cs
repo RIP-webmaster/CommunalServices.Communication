@@ -13,7 +13,6 @@ namespace GISGKHIntegration
     /// </summary>
     public class ExportDeviceRes : ApiResultBase
     {
-        public int RequestState { get; set; }
         public string HouseGUID { get; set; }        
 
         public List<MDevice> Devices { get; set; }

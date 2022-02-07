@@ -10,7 +10,6 @@ namespace GISGKHIntegration.API
 {
     public class GetAppealsRes : ApiResultBase
     {
-        public int RequestState { get; set; }        
         public List<GISGKHIntegration.Data.Appeal> Entries { get; set; }
 
         public GetAppealsRes()

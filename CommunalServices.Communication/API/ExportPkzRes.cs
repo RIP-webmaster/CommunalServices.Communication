@@ -10,7 +10,6 @@ namespace GISGKHIntegration
 {
     public class ExportPkzRes : ApiResultBase
     {
-        public int RequestState { get; set; }
         public string HouseGUID { get; set; }
         public List<PkzEntry> Entries { get; set; }
 

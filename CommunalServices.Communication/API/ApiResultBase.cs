@@ -23,6 +23,8 @@ namespace GISGKHIntegration
         public string ErrorMessage;
         public string StackTrace;
 
+        public int RequestState { get; set; }
+
         public static T GetExceptionResult<T>(
             string name, Exception exc, DateTime date_query, decimal query_duration
             ) where T : ApiResultBase, new()

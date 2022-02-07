@@ -11,7 +11,6 @@ namespace GISGKHIntegration
     public class ExportNsiRes : ApiResultBase
     {
         public List<Data.NsiItem> NsiItems { get; set; }
-        public int RequestState { get; set; }
 
         public ExportNsiRes()
         {

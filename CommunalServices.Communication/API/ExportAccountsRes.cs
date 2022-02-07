@@ -10,8 +10,7 @@ namespace GISGKHIntegration
 {
     public class ExportAccountsRes : ApiResultBase
     {
-        public string HouseGUID { get; set; }
-        public int RequestState { get; set; }
+        public string HouseGUID { get; set; }        
 
         public List<Data.Account> Accounts { get; set; }
 

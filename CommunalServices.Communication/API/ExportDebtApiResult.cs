@@ -12,8 +12,7 @@ namespace GISGKHIntegration
         {
             this.NextPageGuid = string.Empty;
         }
-
-        public int RequestState { get; set; }
+                
         public DebtRequest[] Requests { get; set; }
         public string NextPageGuid { get; set; }
     }
