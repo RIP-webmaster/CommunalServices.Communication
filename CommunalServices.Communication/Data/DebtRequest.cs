@@ -16,6 +16,10 @@ namespace CommunalServices.Communication.Data
         public string HouseGUID { get; set; }
         public string HouseAddress { get; set; }
         public string HouseNkv { get; set; }
+        public DateTime RequestDate { get; set; }
+        public DateTime? MailDate { get; set; }
+        public bool IsAnswered { get; set; }
+        public int KPost { get; set; }
         
         public static string ProcessRequests(DebtRequest[] requests, string title, int god, int mes, 
             RequestsFilter filter, out DebtRequest[] result, int k_post)

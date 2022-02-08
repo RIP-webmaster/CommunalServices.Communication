@@ -23,6 +23,11 @@ namespace CommunalServices.Communication.API
         public string OrgPpaGuid { get; set; }
 
         /// <summary>
+        /// Код организации
+        /// </summary>
+        public int KPost { get; set; }
+
+        /// <summary>
         /// ИД запроса (заполняется после того, как запрос отправлен)
         /// </summary>
         public string MessageGuid { get; set; }

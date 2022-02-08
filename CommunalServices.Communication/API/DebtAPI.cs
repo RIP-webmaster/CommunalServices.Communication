@@ -13,7 +13,7 @@ namespace GISGKHIntegration
 {
     public static class DebtAPI
     {
-        public static ApiResult ExportDebtRequests_Begin(string orgPPAGUID, string pageGuid)
+        public static ApiResult ExportDebtRequests_Begin(string orgPPAGUID, string pageGuid, bool includeAnswered)
         {
             lock (GisAPI.csLock)
             {
@@ -40,31 +40,32 @@ namespace GISGKHIntegration
                 var request = new exportDSRsRequest();
                 request.Id = "signed-data-container";
 
+                //критерии
+                List<object> itemsList = new List<object>(3);
+                List<ItemsChoiceType3> choicesList = new List<ItemsChoiceType3>(3);
+
+                itemsList.Add(new Period()
+                {
+                    startDate = t_start,
+                    endDate = t_end
+                });
+
+                choicesList.Add(ItemsChoiceType3.periodOfSendingRequest);
+
+                if (!includeAnswered)
+                {
+                    itemsList.Add(ResponseStatusType.NotSent);
+                    choicesList.Add(ItemsChoiceType3.responseStatus);
+                }
+
                 if (!string.IsNullOrEmpty(pageGuid))
                 {
-                    request.Items = new object[] { new Period(){
-                        startDate = t_start,
-                        endDate = t_end
-                    },ResponseStatusType.NotSent,pageGuid};
-
-                    request.ItemsElementName = new ItemsChoiceType3[] { 
-                     ItemsChoiceType3.periodOfSendingRequest,
-                     ItemsChoiceType3.responseStatus,
-                     ItemsChoiceType3.exportSubrequestGUID
-                    };
+                    itemsList.Add(pageGuid);
+                    choicesList.Add(ItemsChoiceType3.exportSubrequestGUID);
                 }
-                else
-                {
-                    request.Items = new object[] { new Period(){
-                        startDate = t_start,
-                        endDate = t_end
-                    },ResponseStatusType.NotSent};
 
-                    request.ItemsElementName = new ItemsChoiceType3[] { 
-                     ItemsChoiceType3.periodOfSendingRequest,
-                     ItemsChoiceType3.responseStatus
-                    };
-                }
+                request.Items = itemsList.ToArray();
+                request.ItemsElementName = choicesList.ToArray();
                 
                 try
                 {
@@ -111,7 +112,7 @@ namespace GISGKHIntegration
             }//end lock
         }
 
-        public static ExportDebtApiResult ExportDebtRequests_Check(string message_guid, string orgPPAGUID)
+        public static ExportDebtApiResult ExportDebtRequests_Check(string message_guid, string orgPPAGUID, int k_post)
         {
             lock (GisAPI.csLock)
             {
@@ -207,6 +208,8 @@ namespace GISGKHIntegration
                                             debtRequest.SubrequestGUID = dsr.subrequestData[i].subrequestGUID;
                                             sb.AppendLine("Request number: " + dsr.subrequestData[i].requestInfo.requestNumber);
                                             debtRequest.Number = dsr.subrequestData[i].requestInfo.requestNumber;
+                                            debtRequest.RequestDate = dsr.subrequestData[i].requestInfo.sentDate;
+                                            debtRequest.KPost = k_post;
                                             
                                             var hfo = dsr.subrequestData[i].requestInfo.housingFundObject;
 
@@ -227,11 +230,14 @@ namespace GISGKHIntegration
                                                 sb.AppendLine("Responder GUID: " +
                                                     dsr.subrequestData[i].responseData.executorInfo.GUID.ToString());
                                             }
-                                            else
+
+                                            if (dsr.subrequestData[i].responseStatus != ResponseStatusType.NotSent)
                                             {
-                                                requests.Add(debtRequest);
+                                                debtRequest.IsAnswered = true;
+                                                sb.AppendLine("Responce status: " + dsr.subrequestData[i].responseStatus.ToString());
                                             }
 
+                                            requests.Add(debtRequest);
                                             sb.AppendLine();
                                         }//end for
                                     }
@@ -381,6 +387,8 @@ namespace GISGKHIntegration
         /// <param name="pageGuid">
         /// ИД следующей страницы для запроса с постраничным выводом или пустая строка для получения первой страницы
         /// </param>
+        /// <param name="k_post">Код организации</param>
+        /// <param name="includeAnswered">Выгрузить также запросы, на которые уже отправлен ответ</param>
         /// <remarks>
         /// Постраничный вывод используется, когда число результатов превышает 100 (в ответе от ГИС ЖКХ заполнен 
         /// элемент PagedOutput). В первоначальном запросе значение pageGuid должно быть пустым. Если запрос вернул более 
@@ -388,10 +396,12 @@ namespace GISGKHIntegration
         /// Это значение нужно передать как pageGuid в следующий запрос. 
         /// В последнем ответе значение <see cref="ExportDebtApiResult.NextPageGuid"/> будет пустым.
         /// </remarks>
-        public ExportDebtApiRequest(string orgPPAGUID, string pageGuid)
+        public ExportDebtApiRequest(string orgPPAGUID, string pageGuid, int k_post, bool includeAnswered)
         {
             this.OrgPpaGuid = orgPPAGUID;
             this.PageGuid = pageGuid;
+            this.KPost = k_post;
+            this.IncludeAnswered = includeAnswered;
         }
 
         /// <summary>
@@ -399,16 +409,21 @@ namespace GISGKHIntegration
         /// </summary>
         public string PageGuid { get; set; }
 
+        /// <summary>
+        /// Выгрузить также запросы, на которые уже отправлен ответ (по умолчанию выгружаются только запросы без ответа)
+        /// </summary>
+        public bool IncludeAnswered { get; set; }
+
         public override ApiResultBase Send()
         {
-            ApiResultBase ret = DebtAPI.ExportDebtRequests_Begin(this.OrgPpaGuid, this.PageGuid);
+            ApiResultBase ret = DebtAPI.ExportDebtRequests_Begin(this.OrgPpaGuid, this.PageGuid, this.IncludeAnswered);
             this.MessageGuid = ret.messageGUID;
             return ret;
         }
 
         public override ApiResultBase CheckState()
         {
-            ApiResultBase ret = DebtAPI.ExportDebtRequests_Check(this.MessageGuid, this.OrgPpaGuid);
+            ApiResultBase ret = DebtAPI.ExportDebtRequests_Check(this.MessageGuid, this.OrgPpaGuid, this.KPost);
             return ret;
         }
     }
