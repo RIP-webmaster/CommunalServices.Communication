@@ -2,10 +2,10 @@
  * Copyright (c) 2021,  Svitkin V.G. 
  * License: BSD 2.0 */
 //GISGKH_Integration: клиент API для получения запросов о задолженности из ГИС ЖКХ
-
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CommunalServices.Communication.API;
 using CommunalServices.Communication.Data;
 using GisgkhServices.Debt;
 
@@ -367,6 +367,49 @@ namespace GISGKHIntegration
 
             }//end lock
         }
+    }
 
+    /// <summary>
+    /// Представляет запрос к API ГИСЖКХ на экспорт запросов о задолженности, подтвержденной судебным актом
+    /// </summary>
+    public class ExportDebtApiRequest : ApiRequestBase
+    {
+        /// <summary>
+        /// Создает новый запрос на экспорт запросов о задолженности
+        /// </summary>
+        /// <param name="orgPPAGUID">ИД поставщика информации</param>
+        /// <param name="pageGuid">
+        /// ИД следующей страницы для запроса с постраничным выводом или пустая строка для получения первой страницы
+        /// </param>
+        /// <remarks>
+        /// Постраничный вывод используется, когда число результатов превышает 100 (в ответе от ГИС ЖКХ заполнен 
+        /// элемент PagedOutput). В первоначальном запросе значение pageGuid должно быть пустым. Если запрос вернул более 
+        /// одной страницы, в ответе на него будет заполнено свойство <see cref="ExportDebtApiResult.NextPageGuid"/>. 
+        /// Это значение нужно передать как pageGuid в следующий запрос. 
+        /// В последнем ответе значение <see cref="ExportDebtApiResult.NextPageGuid"/> будет пустым.
+        /// </remarks>
+        public ExportDebtApiRequest(string orgPPAGUID, string pageGuid)
+        {
+            this.OrgPpaGuid = orgPPAGUID;
+            this.PageGuid = pageGuid;
+        }
+
+        /// <summary>
+        /// ИД следующей страницы для запроса с постраничным выводом или пустая строка, если запрошена первая страница
+        /// </summary>
+        public string PageGuid { get; set; }
+
+        public override ApiResultBase Send()
+        {
+            ApiResultBase ret = DebtAPI.ExportDebtRequests_Begin(this.OrgPpaGuid, this.PageGuid);
+            this.MessageGuid = ret.messageGUID;
+            return ret;
+        }
+
+        public override ApiResultBase CheckState()
+        {
+            ApiResultBase ret = DebtAPI.ExportDebtRequests_Check(this.MessageGuid, this.OrgPpaGuid);
+            return ret;
+        }
     }
 }

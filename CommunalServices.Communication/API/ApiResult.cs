@@ -11,7 +11,6 @@ namespace GISGKHIntegration
     public class ApiResult:ApiResultBase
     {
         //get state result
-        public string messageGUID = "";        
         public List<ApiResultEntry> entries = new List<ApiResultEntry>();
 
         //import payment data

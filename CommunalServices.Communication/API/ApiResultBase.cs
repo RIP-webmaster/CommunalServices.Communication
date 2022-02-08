@@ -3,8 +3,8 @@
  * License: BSD 2.0 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using CommunalServices.Communication.Data;
 
 namespace GISGKHIntegration
 {
@@ -22,6 +22,8 @@ namespace GISGKHIntegration
         public string ErrorCode;
         public string ErrorMessage;
         public string StackTrace;
+
+        public string messageGUID = "";
 
         public int RequestState { get; set; }
 
@@ -68,6 +70,12 @@ namespace GISGKHIntegration
         {
             return this.text;
         }
+
+        public bool IsSuccessfullyProcessed()
+        {
+            if (this.error || this.exception) return false;
+
+            return this.RequestState == RequestStates.RS_PROCESSED;
+        }
     }
-    
 }

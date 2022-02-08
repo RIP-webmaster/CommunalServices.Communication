@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\ApiRequestBase.cs" />
     <Compile Include="API\ApiResult.cs" />
     <Compile Include="API\ApiResultBase.cs" />
     <Compile Include="API\DebtAPI.cs" />
