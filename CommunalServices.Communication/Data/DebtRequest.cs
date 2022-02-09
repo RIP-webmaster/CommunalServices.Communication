@@ -85,6 +85,7 @@ namespace CommunalServices.Communication.Data
                     }
                 }
 
+                //print
                 for (int j = 0; j < dolgdata.Length; j++)
                 {
                     switch (filter)
@@ -107,9 +108,14 @@ namespace CommunalServices.Communication.Data
                     sb.AppendLine();
                 }
 
-                if (!has_dolg)
+                //add to output
+                switch (filter)
                 {
-                    requests_selected.Add(requests[i]);
+                    case RequestsFilter.HasDebt: if (has_dolg) requests_selected.Add(requests[i]);
+                        break;
+                    case RequestsFilter.NoDebt: if (!has_dolg) requests_selected.Add(requests[i]);
+                        break;
+                    default: requests_selected.Add(requests[i]); break;
                 }
             }
 
