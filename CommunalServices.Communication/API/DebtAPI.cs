@@ -264,6 +264,15 @@ namespace GISGKHIntegration
                                     sb.AppendLine("ErrorMes: " + (item as ErrorMessageType).Description);
                                     sb.AppendLine("StackTrace: ");
                                     sb.AppendLine((item as ErrorMessageType).StackTrace);
+
+                                    //INT002012 - Нет объектов для экспорта
+                                    if ((item as ErrorMessageType).ErrorCode != "INT002012")
+                                    {
+                                        apires.error = true;
+                                        apires.ErrorCode = (item as ErrorMessageType).ErrorCode;
+                                        apires.ErrorMessage = (item as ErrorMessageType).Description;
+                                        apires.StackTrace = (item as ErrorMessageType).StackTrace;
+                                    }
                                 }
                                 else sb.AppendLine(item.GetType().ToString());
                             }//end foreach
@@ -417,6 +426,34 @@ namespace GISGKHIntegration
         public override ApiResultBase Send()
         {
             ApiResultBase ret = DebtAPI.ExportDebtRequests_Begin(this.OrgPpaGuid, this.PageGuid, this.IncludeAnswered);
+            this.MessageGuid = ret.messageGUID;
+            return ret;
+        }
+
+        public override ApiResultBase CheckState()
+        {
+            ApiResultBase ret = DebtAPI.ExportDebtRequests_Check(this.MessageGuid, this.OrgPpaGuid, this.KPost);
+            return ret;
+        }
+    }
+
+    public class ImportDebtResponseApiRequest : ApiRequestBase
+    {
+        public ImportDebtResponseApiRequest(string orgPPAGUID, DebtRequest[] requests, string executorGuid, int k_post)
+        {
+            this.OrgPpaGuid = orgPPAGUID;
+            this.KPost = k_post;
+            this.Requests = requests;
+            this.ExecutorGuid = executorGuid;
+        }
+
+        public DebtRequest[] Requests { get; set; }
+
+        public string ExecutorGuid { get; set; }
+
+        public override ApiResultBase Send()
+        {
+            ApiResultBase ret = DebtAPI.ImportDebtResponces_Begin(this.OrgPpaGuid, this.Requests, this.ExecutorGuid);
             this.MessageGuid = ret.messageGUID;
             return ret;
         }
