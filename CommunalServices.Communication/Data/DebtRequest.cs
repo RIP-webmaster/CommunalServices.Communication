@@ -60,7 +60,7 @@ namespace CommunalServices.Communication.Data
             {
                 DolgData[] dolgdata = DB_LS.GetDolgData(requests[i].HouseGUID, requests[i].HouseNkv, god, mes, k_post);
 
-                if (dolgdata.Length == 0)
+                if (dolgdata.Length == 0 && filter == RequestsFilter.All)
                 {
                     sb.Append("|");
                     sb.Append(requests[i].Number.PadLeft(15, ' ') + "|");
@@ -100,11 +100,18 @@ namespace CommunalServices.Communication.Data
                     sb.Append(requests[i].Number.PadLeft(15, ' ') + "|");
 
                     string addr = dolgdata[j].Addm + ", кв. " + requests[i].HouseNkv;
+                    decimal dolg = dolgdata[j].Sum;
+
+                    if (k_post == 339)
+                    {
+                        //Райкомхоз Теплосети, эл. письмо от 11.03.2022
+                        dolg = dolgdata[j].DolgUsl;
+                    }
 
                     sb.Append(addr.PadRight(35, ' ') + "|");
                     sb.Append(dolgdata[j].k_s4.ToString().PadLeft(8, ' ') + "|");
                     sb.Append(dolgdata[j].FIO.PadRight(30, ' ') + "|");
-                    sb.Append(dolgdata[j].Sum.ToString().PadLeft(10, ' ') + "|");
+                    sb.Append(dolg.ToString().PadLeft(10, ' ') + "|");
                     sb.AppendLine();
                 }
 

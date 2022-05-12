@@ -34,9 +34,12 @@ namespace CommunalServices.Communication.Data
                 }
             }
 
-            if (IsPostResource(k_post))
+            int k_s1upr = k_post;
+
+            if (IsPostResource(k_post) || k_post == 504 || k_post == 329 || k_post == 406)
             {
-                k_post = 0; //выделение долгов РСО не реализовано
+                k_s1upr = 0; //у РСО нет отдельного ЛС
+                //ТСЖ Зари 28, ТСЖ Ленинградский 40, ТСЖ Зари 85 - упр. ТагилСити
             }
 
             List<DolgData> ret = new List<DolgData>();
@@ -47,17 +50,27 @@ namespace CommunalServices.Communication.Data
             {
                 SqlCommand cmd = new SqlCommand();
 
-                cmd.CommandText = @"
+                string condition = @" WHERE k_s4=rls.k_s4 AND god=rls.god AND mes=rls.mes AND k_s1<>999 ";
+
+                if(k_post == 339)
+                {
+                    condition += " AND (k_post=" + k_post.ToString(CultureInfo.InvariantCulture) + " OR k_s1=8) ";
+                    //k_s1=8 - Отопление Планта/Райкомхоз-Теплосети
+                }
+
+                string mainQuery = @"
 SELECT addm,k_s4,fio, 
-(SELECT sum(saldo_n+p_saldo_n-(oplt+p_oplt)) FROM [ripo].[dbo].[rob] 
-WHERE k_s4=rls.k_s4 AND god=rls.god AND mes=rls.mes AND k_s1<>999) AS ""Dolg"" 
+(SELECT sum(saldo_n+p_saldo_n-(oplt+p_oplt)) FROM [ripo].[dbo].[rob] {0}) AS ""Dolg"", 
+(SELECT sum(saldo_n-oplt) FROM [ripo].[dbo].[rob] {0}) AS ""Dolg_usl""
 FROM [ripo_uk].[dbo].[houses] INNER JOIN ripo.dbo.rls 
 ON houses.street=rls.t_s5_name AND houses.nhouse=rls.t_dom 
 WHERE god=@god and mes=@mes and house_guid=@house_guid and t_nomer_kv=@t_nomer_kv";
 
-                if (k_post != 0)
+                cmd.CommandText = string.Format(mainQuery, condition);
+
+                if (k_s1upr != 0)
                 {
-                    cmd.CommandText += " AND rls.k_s1upr=@k_post";
+                    cmd.CommandText += " AND rls.k_s1upr=@k_s1upr";
                 }
 
                 cmd.Connection = con;
@@ -67,9 +80,9 @@ WHERE god=@god and mes=@mes and house_guid=@house_guid and t_nomer_kv=@t_nomer_k
                 cmd.Parameters.AddWithValue("god", god);
                 cmd.Parameters.AddWithValue("mes", mes);
 
-                if (k_post != 0)
+                if (k_s1upr != 0)
                 {
-                    cmd.Parameters.AddWithValue("k_post", k_post);
+                    cmd.Parameters.AddWithValue("k_s1upr", k_s1upr);
                 }
 
                 SqlDataReader rd = cmd.ExecuteReader();
@@ -97,6 +110,11 @@ WHERE god=@god and mes=@mes and house_guid=@house_guid and t_nomer_kv=@t_nomer_k
                         d.Sum = Convert.ToDecimal(rd["Dolg"]);
                     }
 
+                    if (!rd.IsDBNull(rd.GetOrdinal("Dolg_usl")))
+                    {
+                        d.DolgUsl = Convert.ToDecimal(rd["Dolg_usl"]);
+                    }
+
                     ret.Add(d);
                 }
             }//end using
@@ -111,5 +129,6 @@ WHERE god=@god and mes=@mes and house_guid=@house_guid and t_nomer_kv=@t_nomer_k
         public string Addm { get; set; }
         public string FIO { get; set; }
         public decimal Sum { get; set; }
+        public decimal DolgUsl { get; set; }
     }
 }

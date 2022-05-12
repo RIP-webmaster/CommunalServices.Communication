@@ -1903,7 +1903,10 @@ ErrorCode=@ErrorCode, ErrorMessage=@ErrorMessage, StackTrace=@StackTrace, DateCh
                 }
                 else
                 {
-                    cmd.CommandText += "WHERE k_s1upr IN (SELECT k_post FROM DataProviders WHERE k_post<>0)";
+                    cmd.CommandText += 
+                        "WHERE k_s1upr IN (SELECT k_post FROM DataProviders WHERE k_post<>0) AND k_s1upr NOT IN (750,568,723,309,753)";
+                    //УК ПРО искл. - нет размещенных ПУ
+                    //ПРОдвижение, Огни Вагонки, ХимЭнерго, Северный - не предоставлен доступ
                 }
 
                 SqlDataReader rd = cmd.ExecuteReader();

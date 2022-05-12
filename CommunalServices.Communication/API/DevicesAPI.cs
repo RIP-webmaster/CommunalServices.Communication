@@ -277,6 +277,10 @@ namespace GISGKHIntegration
                                 sb.AppendLine("ErrorMes: " + (item as ErrorMessageType).Description);
                                 sb.AppendLine("StackTrace: ");
                                 sb.AppendLine((item as ErrorMessageType).StackTrace);
+                                apires.error = true;
+                                apires.ErrorCode = (item as ErrorMessageType).ErrorCode;
+                                apires.ErrorMessage = (item as ErrorMessageType).Description;
+                                apires.StackTrace = (item as ErrorMessageType).StackTrace;
                             }
                         }//end foreach
 
