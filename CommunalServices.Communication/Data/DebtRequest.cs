@@ -78,7 +78,28 @@ namespace CommunalServices.Communication.Data
                 {
                     for (int j = 0; j < dolgdata.Length; j++)
                     {
-                        if (dolgdata[j].Sum > 1000.0M)
+                        decimal debtSum = dolgdata[j].Sum;
+                        decimal debtBorderline = 1000.0M;
+
+                        if (k_post == 747 || k_post==748 || DB_LS.IsTsjTagilsiti(k_post))
+                        {
+                            //найдем сумму начислений за последние 4 месяца
+                            int god_start = god;
+                            int mes_start = mes - 3;
+                            
+                            if (mes_start <= 0)
+                            {
+                                god_start--;
+                                mes_start = 12 - mes_start;
+                            }
+
+                            decimal nach_sum = DB_LS.GetNachislByRange(dolgdata[j].k_s4, god_start, mes_start, god, mes);
+
+                            //учитывать долги только более 4 месяцев
+                            if (nach_sum > 1000.0M) debtBorderline = nach_sum;
+                        }
+
+                        if (debtSum > debtBorderline)
                         {
                             has_dolg = true; break;
                         }
