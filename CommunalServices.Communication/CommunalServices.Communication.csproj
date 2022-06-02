@@ -68,6 +68,7 @@
     <Compile Include="Data\DatabaseParams.cs" />
     <Compile Include="Data\DB.cs" />
     <Compile Include="Data\DB_LS.cs" />
+    <Compile Include="Data\DebtInfo.cs" />
     <Compile Include="Data\DebtRequest.cs" />
     <Compile Include="Data\MDevice.cs" />
     <Compile Include="Data\NsiItem.cs" />
