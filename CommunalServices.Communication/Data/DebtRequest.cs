@@ -93,9 +93,4 @@ namespace CommunalServices.Communication.Data
         }
 
     }
-
-    public enum RequestsFilter
-    {
-        All = 1, HasDebt = 2, NoDebt = 3
-    }
 }
