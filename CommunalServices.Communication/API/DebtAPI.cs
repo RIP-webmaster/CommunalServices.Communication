@@ -382,6 +382,115 @@ namespace GISGKHIntegration
 
             }//end lock
         }
+
+        /// <summary>
+        /// Отправка ответов на запросы о задолженности (поддерживает размещение информации о наличии задолженности)
+        /// </summary>        
+        public static ApiResult ImportDebtInfo_Begin(string orgPPAGUID, DebtInfo[] responses, string executorGuid)
+        {
+            lock (GisAPI.csLock)
+            {
+                GisAPI.LastRequest = ""; GisAPI.LastResponce = "";
+                var proxy = new DebtRequestsAsyncPortClient("DebtRequestsAsyncPort");
+                ApiResult apires = new ApiResult();
+
+                //формирование входных параметров запроса
+
+                RequestHeader hdr = new RequestHeader();//заголовок запроса
+
+                hdr.Date = DateTime.Now;
+                hdr.MessageGUID = Guid.NewGuid().ToString();
+                hdr.ItemElementName = ItemChoiceType.orgPPAGUID;
+                hdr.Item = orgPPAGUID;
+
+                hdr.IsOperatorSignature = true;
+                hdr.IsOperatorSignatureSpecified = true;
+                                
+                var request = new importDSRResponsesRequest();
+                request.Id = "signed-data-container";
+
+                var actions = new List<importDSRResponsesRequestAction>();
+                for (int i = 0; i < responses.Length; i++)
+                {
+                    importDSRResponsesRequestAction act = new importDSRResponsesRequestAction();
+                    act.subrequestGUID = responses[i].Request.SubrequestGUID;
+                    act.TransportGUID = Guid.NewGuid().ToString();
+                    act.actionType = DSRResponseActionType.Send;
+                    act.responseData = new ImportDSRResponseType();
+                    act.responseData.hasDebt = responses[i].HasCourtDebt;
+                    act.responseData.executorGUID = executorGuid;
+
+                    if (responses[i].HasCourtDebt)
+                    {
+                        //есть подтвержденный судебным актом долг
+                        PersonInfo[] persons = System.Linq.Enumerable.ToArray(responses[i].GetPersonsInfo());
+                        DebtInfoType[] debt = new DebtInfoType[persons.Length];
+
+                        for (int j = 0; j < persons.Length; j++)
+                        {
+                            debt[j] = new DebtInfoType();
+                            debt[j].person = new DebtInfoTypePerson();
+                            debt[j].person.firstName = persons[j].Imya;
+                            debt[j].person.lastName = persons[j].Familia;
+
+                            if (!string.IsNullOrEmpty(persons[j].Otchestvo)) debt[j].person.middleName = persons[j].Otchestvo;           
+                        }
+
+                        act.responseData.debtInfo = debt;
+                        string descr = responses[i].ExtraInfo;
+
+                        if (descr.Length > 1000) descr = descr.Substring(0, 950)+"...";
+
+                        act.responseData.description = descr;
+                    }
+                    
+                    actions.Add(act);
+                }
+
+                request.action = actions.ToArray();
+
+                try
+                {
+                    long t1 = Environment.TickCount;
+                    AckRequest ack;
+
+                    //Отправка запроса                    
+                    var res = proxy.importResponses(hdr, request, out ack);
+
+                    long t2 = Environment.TickCount;
+                    apires.in_xml = GisAPI.LastRequest;
+                    apires.out_xml = GisAPI.LastResponce;
+                    apires.query_duration = (t2 - t1) / 1000.0M;
+                    apires.date_query = DateTime.Now;
+
+                    StringBuilder sb = new StringBuilder(300);
+
+                    if (res == null) { apires.text = ("service returned null"); return apires; }
+
+                    var resAck = ack.Ack;
+                    apires.messageGUID = resAck.MessageGUID;
+                    sb.AppendLine("RequesterMessageGUID: " + resAck.RequesterMessageGUID);
+                    sb.AppendLine("MessageGUID: " + resAck.MessageGUID);
+
+                    sb.AppendLine("Дата и время запроса: " + apires.date_query);
+                    sb.AppendLine("Длительность обработки запроса: " + (apires.query_duration).ToString("F3") + " c.");
+                    apires.text = sb.ToString();
+
+                    return apires;
+                }
+                catch (Exception exc)
+                {
+                    ApiResultBase.InitExceptionResult(apires, "ImportDebtInfo", exc);
+                    return apires;
+                }
+                finally
+                {
+                    try { proxy.Close(); }
+                    catch (Exception) { }
+                }
+
+            }//end lock
+        }
     }
 
     /// <summary>
