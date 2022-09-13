@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GISGKH_Lib, Version=2.12.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\GISGKH_Lib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -74,6 +70,7 @@
     <Compile Include="Data\MDevice.cs" />
     <Compile Include="Data\NsiItem.cs" />
     <Compile Include="Data\Payment.cs" />
+    <Compile Include="Data\PkzData.cs" />
     <Compile Include="Data\PkzEntry.cs" />
     <Compile Include="Data\Premises.cs" />
     <Compile Include="API\ExportDebtApiResult.cs" />

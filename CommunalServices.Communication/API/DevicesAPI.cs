@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Globalization;
+using CommunalServices.Communication.Data;
 using GKH;
 
 namespace GISGKHIntegration
@@ -300,7 +301,7 @@ namespace GISGKHIntegration
             }//end lock
         }
 
-        public static ImportPkzRes ImportPkz_Begin(string house_guid, string orgPPAGUID, GISGKH_Lib.PkzTableEntry[] pkz)
+        public static ImportPkzRes ImportPkz_Begin(string house_guid, string orgPPAGUID, PkzData[] pkz)
         {
             lock (GisAPI.csLock)
             {
@@ -329,10 +330,9 @@ namespace GISGKHIntegration
                     var list = new List<importMeteringDeviceValuesRequestMeteringDevicesValues>();
                     var entries = new List<ImportPkzResEntry>(pkz.Length);
 
-                    
-                    foreach (var item in pkz)
+                    foreach (PkzData item in pkz)
                     {
-                        if (String.IsNullOrEmpty(item.deviceGUID))
+                        if (String.IsNullOrEmpty(item.DeviceGUID))
                         {
                             ImportPkzResEntry entry = new ImportPkzResEntry();
                             entry.gisgkh_num = "";
@@ -342,23 +342,23 @@ namespace GISGKHIntegration
                         }
 
                         var vals = new importMeteringDeviceValuesRequestMeteringDevicesValues();
-                        vals.Item = item.deviceGUID;
+                        vals.Item = item.DeviceGUID;
                         vals.ItemElementName = ItemChoiceType7.MeteringDeviceRootGUID;
 
                         string transportGUID=Guid.NewGuid().ToString();
 
-                        if (item.resource == "Электрическая энергия")
+                        if (item.Resource == "Электрическая энергия")
                         {
                             var electric = new importMeteringDeviceValuesRequestMeteringDevicesValuesElectricDeviceValue();
                             electric.CurrentValue = new ElectricMeteringValueImportType();
                             electric.CurrentValue.TransportGUID = transportGUID;
-                            electric.CurrentValue.DateValue = item.data_pkz;
+                            electric.CurrentValue.DateValue = item.DatePkz;
 
-                            if (item.count_pkz > 1)
+                            if (item.CountPkz > 1)
                             {
-                                electric.CurrentValue.MeteringValueT2 = item.pkz2.ToString(CultureInfo.InvariantCulture);
+                                electric.CurrentValue.MeteringValueT2 = item.Pkz2.ToString(CultureInfo.InvariantCulture);
                             }
-                            electric.CurrentValue.MeteringValueT1 = item.pkz1.ToString(CultureInfo.InvariantCulture);
+                            electric.CurrentValue.MeteringValueT1 = item.Pkz1.ToString(CultureInfo.InvariantCulture);
                             vals.Item1 = electric;
                         }
                         else
@@ -367,31 +367,27 @@ namespace GISGKHIntegration
                             x.CurrentValue = new OneRateMeteringValueImportType[] {
                                 new OneRateMeteringValueImportType()
                             };
-                            x.CurrentValue[0].DateValue = item.data_pkz;
+                            x.CurrentValue[0].DateValue = item.DatePkz;
                             x.CurrentValue[0].MunicipalResource = new nsiRef();
                             x.CurrentValue[0].TransportGUID = transportGUID;
 
-                            if (item.resource == "Холодная вода")
+                            if (item.Resource == "Холодная вода")
                             {
                                 x.CurrentValue[0].MunicipalResource.Code = "1";
                                 x.CurrentValue[0].MunicipalResource.GUID = "82F90CCA-24DC-4FF7-AC66-05E53070E5A3".ToLower();
                             }
-                            else if (item.resource == "Горячая вода")
+                            else if (item.Resource == "Горячая вода")
                             {
                                 x.CurrentValue[0].MunicipalResource.Code = "2";
                                 x.CurrentValue[0].MunicipalResource.GUID = "7459C9F5-5D7F-42B4-9CD0-6674737D79FA".ToLower();
                             }
-                            else if (item.resource == "Тепловая энергия")
+                            else if (item.Resource == "Тепловая энергия")
                             {
                                 x.CurrentValue[0].MunicipalResource.Code = "5";
                                 x.CurrentValue[0].MunicipalResource.GUID = "25A29BAE-E430-4424-8F34-8AD83C578657".ToLower();
                             }
-                            else
-                            {
-                                ;
-                            }
-
-                            x.CurrentValue[0].MeteringValue = item.pkz1.ToString(CultureInfo.InvariantCulture);
+                            
+                            x.CurrentValue[0].MeteringValue = item.Pkz1.ToString(CultureInfo.InvariantCulture);
                             vals.Item1 = x;
 
                             
@@ -400,7 +396,7 @@ namespace GISGKHIntegration
                         list.Add(vals);
 
                         ImportPkzResEntry pentry = new ImportPkzResEntry();
-                        pentry.gisgkh_num = item.gisgkh_num;
+                        pentry.gisgkh_num = item.GisgkhNum;
                         pentry.transportGUID = transportGUID;
                         entries.Add(pentry);
 
