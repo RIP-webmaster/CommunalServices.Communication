@@ -41,30 +41,7 @@ namespace CommunalServices.Communication.Data
                 return val.ToString().ToLower();
             }
         }
-
-        public static string GetMailMessage(string content)
-        {
-            StringBuilder sb = new StringBuilder(500);
-            sb.Append("<p>Здравствуйте. По вашей организации в ГИС ЖКХ размещены запросы о наличии задолженности ");
-            sb.Append("за жилищно-коммунальные услуги, ");
-            sb.Append("подтвержденной судебным актом. Просим предоставить информацию ");
-            sb.Append("(наличие или отсутствие судебного акта; полные фамилия, имя и отчество должника, ");
-            sb.Append("если акт есть) ");
-            sb.Append("по адресам, перечисленным ");
-            sb.Append("ниже в графе &quot;с долгами&quot;. ");
-            sb.AppendLine("</p> ");
-            sb.AppendLine();
-            sb.Append("<pre>");
-            sb.Append(content);
-            sb.Append("</pre><br/>");
-            sb.AppendLine();
-            sb.AppendLine("<hr/>");
-            sb.Append("<p>Письмо отправлено автоматически с помощью программного обеспечения GISGKH Integration ");
-            sb.Append("(ООО &quot;Расчеты и платежи&quot;). Если вы не хотите получать уведомления о запросах в ГИС ЖКХ, ");
-            sb.AppendLine("сообщите об этом, ответив на данное письмо.</p>");
-            return sb.ToString();
-        }
-
+        
         public static Tuple<int, string>[] GetOrganisations()
         {
             SqlConnection con = new SqlConnection(DatabaseParams.curr.ConnectionString);
