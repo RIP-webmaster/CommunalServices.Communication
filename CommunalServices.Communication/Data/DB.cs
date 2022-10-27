@@ -1844,8 +1844,6 @@ ErrorCode=@ErrorCode, ErrorMessage=@ErrorMessage, StackTrace=@StackTrace, DateCh
                 object result = cmd.ExecuteScalar();
                 if (result == null || result == DBNull.Value) return null;
                 else return result.ToString();
-            
-
         }
 
         public static List<Tuple<int,string>> GetAllOrgPPAGUID()
@@ -1878,55 +1876,7 @@ ErrorCode=@ErrorCode, ErrorMessage=@ErrorMessage, StackTrace=@StackTrace, DateCh
                 }
 
                 return res;
-            
-
         }
-
-        public static List<Tuple<int, string>> GetHouseGUIDs(int k_post)
-        {
-
-            SqlConnection con = new SqlConnection(DatabaseParams.curr.ConnectionString);
-            List<Tuple<int, string>> res = new List<Tuple<int, string>>(100);
-            
-
-            con.Open();
-            using (con)
-            {
-                SqlCommand cmd = new SqlCommand(
-                    @"SELECT k_s1upr,house_guid FROM ripo_uk.dbo.houses ",
-                    con);
-
-                if (k_post != 0)
-                {
-                    cmd.CommandText += "WHERE k_s1upr = @k_post";
-                    cmd.Parameters.AddWithValue("k_post", k_post);
-                }
-                else
-                {
-                    cmd.CommandText += 
-                        "WHERE k_s1upr IN (SELECT k_post FROM DataProviders WHERE k_post<>0) AND k_s1upr NOT IN (750,568,723,309,753)";
-                    //УК ПРО искл. - нет размещенных ПУ
-                    //ПРОдвижение, Огни Вагонки, ХимЭнерго, Северный - не предоставлен доступ
-                }
-
-                SqlDataReader rd = cmd.ExecuteReader();
-
-                using (rd)
-                {
-                    while (true)
-                    {
-                        if (rd.Read() == false) break;                        
-                        res.Add(new Tuple<int,string>(
-                            Convert.ToInt32(rd[0]),
-                            rd[1].ToString()));
-
-                    }
-                }
-
-                return res;
-            }
-
-        }        
 
     }//end class
     
