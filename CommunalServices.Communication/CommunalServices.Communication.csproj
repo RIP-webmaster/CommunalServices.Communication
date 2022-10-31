@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiRequests\ExportWorkingListApiRequest.cs" />
     <Compile Include="ApiRequests\ImportDebtInfoApiRequest.cs" />
     <Compile Include="API\ApiRequestBase.cs" />
     <Compile Include="API\ApiResult.cs" />
@@ -75,7 +76,9 @@
     <Compile Include="Data\Premises.cs" />
     <Compile Include="API\ExportDebtApiResult.cs" />
     <Compile Include="Data\RequestStates.cs" />
+    <Compile Include="Data\WorkingListItem.cs" />
     <Compile Include="GisgkhServices.Debt\GKHDebtService.cs" />
+    <Compile Include="GisgkhServices.Usl\GKHUslService.cs" />
     <Compile Include="GisgkhUsl.cs" />
     <Compile Include="GKH.Appeals\AppealsApi.cs" />
     <Compile Include="GKH.Appeals\GKHAppealsService.cs" />
@@ -93,6 +96,8 @@
   <ItemGroup>
     <None Include="GisgkhServices.Debt\export.bat" />
     <None Include="GisgkhServices.Debt\GKHDebtService.config" />
+    <None Include="GisgkhServices.Usl\export.bat" />
+    <None Include="GisgkhServices.Usl\GKHUslService.config" />
     <None Include="GKH.Appeals\export.bat" />
     <None Include="GKH.Appeals\GKHAppealsService.config" />
   </ItemGroup>
