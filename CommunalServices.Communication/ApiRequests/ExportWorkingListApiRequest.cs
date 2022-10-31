@@ -16,16 +16,20 @@ namespace CommunalServices.Communication.ApiRequests
     /// </summary>
     public class ExportWorkingListApiRequest : ApiRequestBase
     {
-        public ExportWorkingListApiRequest(string orgPPAGUID, int k_post, string houseGuid)
+        public ExportWorkingListApiRequest(string orgPPAGUID, int k_post, string houseGuid, DateTime periodFrom, DateTime periodTo)
         {
             this.OrgPpaGuid = orgPPAGUID;
             this.KPost = k_post;
             this.HouseGuid = houseGuid;
+            this.PeriodFrom = periodFrom;
+            this.PeriodTo = periodTo;
         }
                 
         public string HouseGuid { get; set; }
+        public DateTime PeriodFrom { get; set; }
+        public DateTime PeriodTo { get; set; }
 
-        public static ApiResult ExportWorkingList_Begin(string orgPPAGUID, string houseGuid)
+        public static ApiResult ExportWorkingList_Begin(string orgPPAGUID, string houseGuid, DateTime periodFrom, DateTime periodTo)
         {
             lock (GisAPI.csLock)
             {
@@ -46,8 +50,8 @@ namespace CommunalServices.Communication.ApiRequests
                 hdr.IsOperatorSignatureSpecified = true;
 
                 //period
-                DateTime t_end = DateTime.Now;
-                DateTime t_start = new DateTime(2016, 1, 1);
+                DateTime t_end = periodTo;
+                DateTime t_start = periodFrom;
 
                 var request = new exportWorkingListRequest();
                 request.Id = "signed-data-container";
@@ -259,7 +263,7 @@ namespace CommunalServices.Communication.ApiRequests
 
         public override ApiResultBase Send()
         {
-            ApiResultBase ret = ExportWorkingList_Begin(this.OrgPpaGuid, this.HouseGuid);
+            ApiResultBase ret = ExportWorkingList_Begin(this.OrgPpaGuid, this.HouseGuid, this.PeriodFrom, this.PeriodTo);
             this.MessageGuid = ret.messageGUID;
             return ret;
         }
