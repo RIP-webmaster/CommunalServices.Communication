@@ -57,8 +57,8 @@ namespace CommunalServices.Communication.ApiRequests
                 request.Id = "signed-data-container";
 
                 //критерии
-                List<object> itemsList = new List<object>(3);
-                List<ItemsChoiceType4> choicesList = new List<ItemsChoiceType4>(3);
+                List<object> itemsList = new List<object>(4);
+                List<ItemsChoiceType4> choicesList = new List<ItemsChoiceType4>(4);
 
                 itemsList.Add(new exportWorkingListRequestMonthYearFrom()
                 {
@@ -74,6 +74,9 @@ namespace CommunalServices.Communication.ApiRequests
                 });
 
                 choicesList.Add(ItemsChoiceType4.MonthYearTo);
+
+                itemsList.Add(WorkListStatus.A);//утвержденные
+                choicesList.Add(ItemsChoiceType4.WorkListStatus);
 
                 itemsList.Add(houseGuid);
                 choicesList.Add(ItemsChoiceType4.FIASHouseGuid);

@@ -198,6 +198,14 @@ namespace CommunalServices.Communication.ApiRequests
                                                 foreach (var x in inner.Items)
                                                 {
                                                     sb.AppendLine("--" + x.GetType().ToString());
+
+                                                    if (x is CommonResultTypeError)
+                                                    {
+                                                        CommonResultTypeError crte = (CommonResultTypeError)x;
+                                                        sb.Append("  Error: ");
+                                                        sb.Append(crte.ErrorCode);
+                                                        sb.AppendLine(" - " + crte.Description);
+                                                    }
                                                 }
                                             }
                                         }

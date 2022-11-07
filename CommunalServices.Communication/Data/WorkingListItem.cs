@@ -19,6 +19,39 @@ namespace CommunalServices.Communication.Data
 
         public string WorkListItemGUID { get; set; }
         public int Count { get; set; }
+
+        public int[] GetYears()
+        {
+            List<int> ret = new List<int>();
+            int n = 0;
+
+            for (int i = PeriodFrom.Year; i <= PeriodTo.Year; i++)
+            {
+                ret.Add(i);
+                n++;
+                if (n > 1000) break;
+            }
+
+            return ret.ToArray();
+        }
+
+        public int GetStartMonth(int year)
+        {
+            if (year < PeriodFrom.Year) return 0;
+            if (year > PeriodTo.Year) return 0;
+
+            if (year == PeriodFrom.Year) return PeriodFrom.Month;
+            else return 1;
+        }
+
+        public int GetEndMonth(int year)
+        {
+            if (year < PeriodFrom.Year) return 0;
+            if (year > PeriodTo.Year) return 0;
+
+            if (year == PeriodTo.Year) return PeriodTo.Month;
+            else return 12;
+        }
     }
 
     public class ExportWorkingListApiResult : ApiResultBase
