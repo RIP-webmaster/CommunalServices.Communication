@@ -1617,6 +1617,49 @@ ErrorCode=@ErrorCode, ErrorMessage=@ErrorMessage, StackTrace=@StackTrace, DateCh
 
         }
 
+        public static int UpdateOrgWork(int k_post, Data.NsiItem item)
+        {
+            SqlConnection con = new SqlConnection(DatabaseParams.curr.ConnectionString);
+            SqlCommand cmd;
+            int c;
+            con.Open();
+
+            using (con)
+            {
+                cmd = new SqlCommand(
+                        @"SELECT COUNT(*) FROM ripo_uk.dbo.gisgkh_works WHERE k_post=@k_post AND guid=@guid", con);
+                cmd.Parameters.AddWithValue("k_post", k_post);
+                cmd.Parameters.AddWithValue("guid", item.GUID);
+
+                object val = cmd.ExecuteScalar();
+                if (val == null || val == DBNull.Value) c = 0;
+                else c = (int)val;
+
+                if (c == 0)
+                {
+                    //add new work
+                    cmd = new SqlCommand(
+                        @"INSERT INTO ripo_uk.dbo.gisgkh_works (k_post,code,name,guid) VALUES  (@k_post,@Code,@Name,@GUID)", con);
+                    cmd.Parameters.AddWithValue("k_post", k_post);
+                    cmd.Parameters.AddWithValue("Code", item.Code);
+                    cmd.Parameters.AddWithValue("Name", item.Name);
+                    cmd.Parameters.AddWithValue("GUID", item.GUID);
+                }
+                else
+                {
+                    //update existing
+                    cmd = new SqlCommand(
+                        @"UPDATE ripo_uk.dbo.gisgkh_works SET name=@Name, code=@Code WHERE k_post=@k_post AND guid=@GUID", con);
+                    cmd.Parameters.AddWithValue("k_post", k_post);
+                    cmd.Parameters.AddWithValue("Code", item.Code);
+                    cmd.Parameters.AddWithValue("Name", item.Name);
+                    cmd.Parameters.AddWithValue("GUID", item.GUID);
+                }
+
+                return cmd.ExecuteNonQuery();
+            }
+        }
+
         public static int UpdateOrgUsl(int k_post, IEnumerable<Data.NsiItem> items,out string info)
         {
             SqlConnection con = new SqlConnection(DatabaseParams.curr.ConnectionString);
@@ -1634,6 +1677,13 @@ ErrorCode=@ErrorCode, ErrorMessage=@ErrorMessage, StackTrace=@StackTrace, DateCh
                 {
                     if (item.Name == null) item.Name = "";
                     if (item.Name2 == null) item.Name2 = "";
+
+                    if (item.SpravNumber == "59")
+                    {
+                        n += UpdateOrgWork(k_post, item);
+                        info += "Работа: " + item.Name + Environment.NewLine;
+                        continue;
+                    }
 
                     //найти есть ли такая услуга
                     cmd = new SqlCommand(

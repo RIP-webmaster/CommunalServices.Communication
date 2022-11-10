@@ -41,6 +41,8 @@ namespace GISGKHIntegration.API
                             break;
                         case "51": request.RegistryNumber = exportDataProviderNsiItemRequestRegistryNumber.Item51;
                             break;
+                        case "59": request.RegistryNumber = exportDataProviderNsiItemRequestRegistryNumber.Item59;
+                            break;
                     }
 
                     try
@@ -193,6 +195,8 @@ namespace GISGKHIntegration.API
                                         sb.AppendLine(x.GUID);
 
                                         n = 0;
+                                        bool isChildItem = false;
+
                                         foreach (var y in x.NsiElementField)
                                         {
                                             if (y is NsiElementStringFieldType)
@@ -220,6 +224,13 @@ namespace GISGKHIntegration.API
                                                 nsitem.Values += (y as NsiElementBooleanFieldType).Name + "=" +
                                                     (y as NsiElementBooleanFieldType).Value.ToString() + "; ";
                                             }
+                                            else if (y is NsiElementNsiRefFieldType)
+                                            {
+                                                if (y.Name.Equals("Ссылка на вышестоящую запись", StringComparison.Ordinal))
+                                                {
+                                                    isChildItem = true;
+                                                }
+                                            }
                                             else
                                             {
                                                 sb.AppendLine("* " + (y).Name + " - " +
@@ -228,7 +239,18 @@ namespace GISGKHIntegration.API
 
                                         }
 
-                                        if (x.IsActual) apires.NsiItems.Add(nsitem);
+                                        if (x.IsActual)
+                                        {
+                                            if (nsitem.SpravNumber == "59")
+                                            {
+                                                //работы и услуги организации - включить только работы верхнего уровня
+                                                if (!isChildItem) apires.NsiItems.Add(nsitem);
+                                            }
+                                            else
+                                            {
+                                                apires.NsiItems.Add(nsitem);
+                                            }
+                                        }
 
                                         sb.AppendLine();
 
