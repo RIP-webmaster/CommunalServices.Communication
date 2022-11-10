@@ -64,6 +64,7 @@
     <Compile Include="API\NsiDataApi.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\Appeal.cs" />
+    <Compile Include="Data\HouseUslData.cs" />
     <Compile Include="Data\DatabaseParams.cs" />
     <Compile Include="Data\DB.cs" />
     <Compile Include="Data\DB_LS.cs" />
