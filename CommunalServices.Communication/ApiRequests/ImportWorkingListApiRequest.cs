@@ -11,25 +11,26 @@ using GisgkhServices.Usl;
 
 namespace CommunalServices.Communication.ApiRequests
 {
-    public class ImportWorkingPlanApiRequest : ApiRequestBase
+    /// <summary>
+    /// Представляет запрос к API на добавление перечня работ и услуг в ГИС ЖКХ
+    /// </summary>
+    public class ImportWorkingListApiRequest : ApiRequestBase
     {
-        public ImportWorkingPlanApiRequest(string orgPPAGUID, int k_post, string worklistGuid, int year, 
-            WorkingListItem[] items, int monthStart, int monthEnd)
+        public ImportWorkingListApiRequest(string orgPPAGUID, int k_post, DateTime dtStart, DateTime dtEnd,
+            string houseGUID, HouseUslData[] items )
         {
             this.OrgPpaGuid = orgPPAGUID;
             this.KPost = k_post;
-            this.WorkingListGuid = worklistGuid;
-            this.Year = year;
+            this.HouseGUID = houseGUID;
             this.Items = items;
-            this.MonthStart = monthStart;
-            this.MonthEnd = monthEnd;
+            this.Start = dtStart;
+            this.End = dtEnd;
         }
 
-        public string WorkingListGuid { get; set; }
-        public int Year { get; set; }
-        public WorkingListItem[] Items { get; set; }
-        public int MonthStart { get; set; }
-        public int MonthEnd { get; set; }
+        public string HouseGUID { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public HouseUslData[] Items { get; set; }
 
         public override ApiResultBase Send()
         {
@@ -42,7 +43,6 @@ namespace CommunalServices.Communication.ApiRequests
                 //формирование входных параметров запроса
 
                 RequestHeader hdr = new RequestHeader();//заголовок запроса
-
                 hdr.Date = DateTime.Now;
                 hdr.MessageGUID = Guid.NewGuid().ToString();
                 hdr.ItemElementName = ItemChoiceType.orgPPAGUID;
@@ -51,40 +51,72 @@ namespace CommunalServices.Communication.ApiRequests
                 hdr.IsOperatorSignature = true;
                 hdr.IsOperatorSignatureSpecified = true;
 
-                var request = new importWorkingPlanRequest();
+                var request = new importWorkingListRequest();
                 request.Id = "signed-data-container";
-                WorkingPlanType wpt = new WorkingPlanType();
-                wpt.TransportGUID = Guid.NewGuid().ToString();
-                wpt.WorkListGUID = this.WorkingListGuid;
-                wpt.Year = (short)this.Year;
-                WorkingPlanTypeWorkPlanItem plan_item;
-                List<WorkingPlanTypeWorkPlanItem> plan_items = new List<WorkingPlanTypeWorkPlanItem>();
 
-                for (int i = 0; i < this.Items.Length; i++)
+                int count;
+
+                if (this.Start.Year == this.End.Year)
                 {
-                    for (int j = this.MonthStart; j <= this.MonthEnd; j++)
+                    count = this.End.Month - this.Start.Month + 1;
+                }
+                else
+                {
+                    count = 13 - this.Start.Month;
+
+                    if (this.End.Year - this.Start.Year >= 2)
                     {
-                        plan_item = new WorkingPlanTypeWorkPlanItem();
-                        plan_item.Items = new object[] { "1" };
-                        plan_item.Year = (short)this.Year;
-                        plan_item.Month = j;
-                        plan_item.TransportGUID = Guid.NewGuid().ToString();
-                        plan_item.WorkListItemGUID = this.Items[i].WorkListItemGUID;
-                        plan_items.Add(plan_item);
+                        count += 12 * (this.End.Year - this.Start.Year - 1);
                     }
+
+                    count += this.End.Month;
                 }
 
-                wpt.WorkPlanItem = plan_items.ToArray();
-                request.WorkingPlan = new WorkingPlanType[]{wpt};
+                if (count < 0) count = 0;
                 
+                var data = new importWorkingListRequestApprovedWorkingListData();
+                data.TransportGUID = Guid.NewGuid().ToString();
+                data.MonthYearFrom = new WorkingListBaseTypeMonthYearFrom();
+                data.MonthYearFrom.Year = (short)this.Start.Year;
+                data.MonthYearFrom.Month = this.Start.Month;
+                data.MonthYearTo = new WorkingListBaseTypeMonthYearTo();
+                data.MonthYearTo.Year = (short)this.End.Year;
+                data.MonthYearTo.Month = this.End.Month;
+                data.FIASHouseGuid = this.HouseGUID;
+                var wlitems = new importWorkingListRequestApprovedWorkingListDataWorkListItem[this.Items.Length];
+                
+                for (int i = 0; i < this.Items.Length; i++)
+                {
+                    var wlitem = new importWorkingListRequestApprovedWorkingListDataWorkListItem();
+                    wlitem.TransportGUID = Guid.NewGuid().ToString();
+                    wlitem.Index = (i + 1).ToString();
+                    wlitem.Items = new object[3];
+                    wlitem.ItemsElementName = new ItemsChoiceType3[3];
+
+                    wlitem.Items[0] = this.Items[i].UslTarif;
+                    wlitem.ItemsElementName[0] = ItemsChoiceType3.Price;
+                    wlitem.Items[1] = this.Items[i].HouseArea;
+                    wlitem.ItemsElementName[1] = ItemsChoiceType3.Amount;
+                    wlitem.Items[2] = count.ToString();
+                    wlitem.ItemsElementName[2] = ItemsChoiceType3.Count;
+                    
+                    wlitem.WorkItemNSI = new nsiRef();
+                    wlitem.WorkItemNSI.GUID = this.Items[i].UslGuid;
+                    wlitem.WorkItemNSI.Code = this.Items[i].UslCode;
+                    wlitems[i] = wlitem;
+                }
+
+                data.WorkListItem = wlitems;
+                request.Item = data;
+
                 try
                 {
                     long t1 = Environment.TickCount;
                     AckRequest ack;
 
                     //Отправка запроса
-                    var rq = new importWorkingPlanRequest1(hdr, request);
-                    var res = proxy.importWorkingPlan(hdr, request, out ack);
+                    var rq = new importWorkingListRequest1(hdr, request);
+                    var res = proxy.importWorkingList(hdr, request, out ack);
 
                     long t2 = Environment.TickCount;
                     apires.in_xml = GisAPI.LastRequest;
@@ -111,7 +143,7 @@ namespace CommunalServices.Communication.ApiRequests
                 }
                 catch (Exception exc)
                 {
-                    ApiResultBase.InitExceptionResult(apires, "ImportWorkingPlan", exc);
+                    ApiResultBase.InitExceptionResult(apires, "ImportWorkingList", exc);
                     return apires;
                 }
                 finally
@@ -123,67 +155,6 @@ namespace CommunalServices.Communication.ApiRequests
             }//end lock
         }
 
-        internal static void ProcessResult(getStateResult result, StringBuilder sb, ApiResult apires)
-        {
-            foreach (object item in result.Items)
-            {
-                if (item is CommonResultType)
-                {
-                    var crt = (CommonResultType)item;
-                    sb.AppendLine("* CommonResultType *");
-                    sb.AppendLine("GUID: " + crt.GUID);
-                    sb.AppendLine("TransportGUID: " + crt.TransportGUID);
-
-                    if (crt.Items != null)
-                    {
-                        foreach (var innerItem in crt.Items)
-                        {
-                            sb.AppendLine("-" + item.GetType().ToString());
-
-                            if (item is CommonResultType)
-                            {
-                                CommonResultType inner = (CommonResultType)item;
-
-                                if (inner.Items != null)
-                                {
-                                    foreach (var x in inner.Items)
-                                    {
-                                        sb.AppendLine("--" + x.GetType().ToString());
-
-                                        if (x is CommonResultTypeError)
-                                        {
-                                            CommonResultTypeError crte = (CommonResultTypeError)x;
-                                            sb.Append("  Error: ");
-                                            sb.Append(crte.ErrorCode);
-                                            sb.AppendLine(" - " + crte.Description);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else if (item is ErrorMessageType)
-                {
-                    sb.AppendLine("* Error *");
-                    sb.AppendLine("ErrorCode: " + (item as ErrorMessageType).ErrorCode);
-                    sb.AppendLine("ErrorMes: " + (item as ErrorMessageType).Description);
-                    sb.AppendLine("StackTrace: ");
-                    sb.AppendLine((item as ErrorMessageType).StackTrace);
-
-                    //INT002012 - Нет объектов для экспорта
-                    if ((item as ErrorMessageType).ErrorCode != "INT002012")
-                    {
-                        apires.error = true;
-                        apires.ErrorCode = (item as ErrorMessageType).ErrorCode;
-                        apires.ErrorMessage = (item as ErrorMessageType).Description;
-                        apires.StackTrace = (item as ErrorMessageType).StackTrace;
-                    }
-                }
-                else sb.AppendLine(item.GetType().ToString());
-            }//end foreach
-        }
-
         public override ApiResultBase CheckState()
         {
             lock (GisAPI.csLock)
@@ -191,7 +162,7 @@ namespace CommunalServices.Communication.ApiRequests
                 GisAPI.LastRequest = ""; GisAPI.LastResponce = "";
                 var proxy = new ServicesPortsTypeAsyncClient("ServicesAsyncPort");
                 var apires = new ApiResult();
-                
+
                 //формирование входных параметров запроса
                 RequestHeader hdr = new RequestHeader();//заголовок запроса
                 hdr.Date = DateTime.Now;
@@ -236,8 +207,8 @@ namespace CommunalServices.Communication.ApiRequests
 
                     if (result != null && result.Items != null)
                     {
-                        ProcessResult(result, sb, apires);
-                    }
+                        ImportWorkingPlanApiRequest.ProcessResult(result, sb, apires);
+                    }                        
 
                     if (result != null && result.Items != null)
                     {
@@ -252,7 +223,8 @@ namespace CommunalServices.Communication.ApiRequests
                 }
                 catch (Exception exc)
                 {
-                    ApiResultBase.InitExceptionResult(apires, "ImportWorkingPlan_Check", exc);
+                    GisAPI.DisableSignature = false;
+                    ApiResultBase.InitExceptionResult(apires, "ImportWorkingList_Check", exc);
                     return apires;
                 }
 
