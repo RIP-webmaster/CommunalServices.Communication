@@ -77,6 +77,22 @@ namespace CommunalServices.Communication.API
                 return arbSend;
             }
 
+            return this.WaitForResult(attempts, waitPeriod, logTarget, progressCallback);
+        }
+
+        /// <summary>
+        /// Выполняет ожидание обработки отправленного запроса
+        /// </summary>
+        /// <param name="attempts">Число попыток проверки состояния запроса</param>
+        /// <param name="waitPeriod">Время задержки перед каждой проверкой состояния</param>
+        /// <param name="logTarget">
+        /// Объект TextWriter, в которой необходимо записывать диагностическую информацию, или значение null
+        /// </param>
+        /// <param name="progressCallback">
+        /// Делегат, который необходимо выполнить для уведомления о числе совершенных попыток, или значение null
+        /// </param>
+        public ApiResultBase WaitForResult(int attempts, TimeSpan waitPeriod, TextWriter logTarget, Action<int> progressCallback)
+        {
             int n = 0;
             ApiResultBase arbCheck;
 

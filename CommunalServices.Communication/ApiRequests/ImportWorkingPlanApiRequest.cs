@@ -156,6 +156,11 @@ namespace CommunalServices.Communication.ApiRequests
                                             sb.Append("  Error: ");
                                             sb.Append(crte.ErrorCode);
                                             sb.AppendLine(" - " + crte.Description);
+
+                                            apires.error = true;
+                                            apires.ErrorCode = crte.ErrorCode;
+                                            apires.ErrorMessage = crte.Description;
+                                            apires.StackTrace = crte.StackTrace;
                                         }
                                     }
                                 }
