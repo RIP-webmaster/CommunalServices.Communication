@@ -493,6 +493,7 @@ namespace GISGKHIntegration
                                             pkz.ResourceGUID = z.MunicipalResource.GUID;
                                             pkz.DatePkz = z.DateValue;
                                             pkz.Value = Convert.ToDecimal(z.MeteringValue);
+                                            pkz.HouseGUID = house_guid;
                                             apires.Entries.Add(pkz);
                                         }
                                     }
@@ -518,12 +519,10 @@ namespace GISGKHIntegration
                                             pkz.DeviceGUID = x.MeteringDeviceRootGUID;
                                             pkz.Source = z.ReadingsSource;
                                             pkz.ResourceGUID = "424C6769-51A7-43B4-8D26-FDCBE7A7D9F4".ToLower();
-                                            /*if (z.MeteringValueT2Specified) pkz.t_s23_knam = "ЭЛ.2";
-                                            else pkz.t_s23_knam = "ЭЛ.1";*/
                                             pkz.DatePkz = z.DateValue;
                                             pkz.Value = Convert.ToDecimal(z.MeteringValueT1);
+                                            pkz.HouseGUID = house_guid;
                                             apires.Entries.Add(pkz);
-
 
                                             if (!String.IsNullOrEmpty(z.MeteringValueT2))
                                             {
@@ -533,9 +532,9 @@ namespace GISGKHIntegration
                                                 pkz.DeviceGUID = x.MeteringDeviceRootGUID;
                                                 pkz.Source = z.ReadingsSource;
                                                 pkz.ResourceGUID = "424C6769-51A7-43B4-8D26-FDCBE7A7D9F4".ToLower();
-                                                //pkz.t_s23_knam = "ЭЛ.2";
                                                 pkz.DatePkz = z.DateValue;
                                                 pkz.Value = Convert.ToDecimal(z.MeteringValueT2);
+                                                pkz.HouseGUID = house_guid;
                                                 apires.Entries.Add(pkz);
                                             }
 
@@ -546,10 +545,7 @@ namespace GISGKHIntegration
                                         }//end foreach
                                     }
                                     else sb.AppendLine("CurrentValue is null");
-
-
                                 }
-                                                                
 
                                 if (x.ArchivedValues != null)
                                 {
