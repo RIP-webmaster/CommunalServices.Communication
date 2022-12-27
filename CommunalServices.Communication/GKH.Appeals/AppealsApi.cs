@@ -36,11 +36,13 @@ namespace GKH.Appeals
 
                 exportAppealRequest request = new exportAppealRequest();
                 request.Id = "signed-data-container";
+
                 request.Items = new object[] { 
-                new exportAppealRequestStatusOfAppeal(){
-                    Sent=true,SentSpecified=true, }
+                    new DateTime(DateTime.Now.Year, 1, 1),
+                    new exportAppealRequestStatusOfAppeal(){Sent=true,SentSpecified=true, }
                 };
-                request.ItemsElementName = new ItemsChoiceType5[] { ItemsChoiceType5.StatusOfAppeal };
+
+                request.ItemsElementName = new ItemsChoiceType5[] { ItemsChoiceType5.StartDate, ItemsChoiceType5.StatusOfAppeal };
 
                 try
                 {
