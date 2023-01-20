@@ -172,8 +172,29 @@ namespace CommunalServices.Communication.ApiRequests
                                     sb.AppendLine("ContractVersionGUID: " + contract.ContractVersionGUID);
                                     sb.AppendLine("DocNum: " + contract.DocNum);
                                     sb.AppendLine("SigningDate: " + contract.SigningDate.ToString());
-                                    apires.SetData("ContractGUID", contract.ContractGUID);
-                                    apires.SetData("ContractVersionGUID", contract.ContractVersionGUID);
+                                    sb.AppendLine("Status: " + contract.ContractStatus.ToString());
+
+                                    if (contract.ContractStatus == ContractStatusExportType.Approved ||
+                                        contract.ContractStatus == ContractStatusExportType.Reviewed)
+                                    {
+                                        apires.SetData("ContractGUID", contract.ContractGUID);
+                                        apires.SetData("ContractVersionGUID", contract.ContractVersionGUID);
+                                    }
+                                }
+                                else if (cach.Item is exportCAChResultTypeCharter)
+                                {
+                                    var charter = (exportCAChResultTypeCharter)cach.Item;
+                                    sb.AppendLine("CharterGUID: " + charter.CharterGUID);
+                                    sb.AppendLine("CharterVersionGUID: " + charter.CharterVersionGUID);
+                                    sb.AppendLine("Date: " + charter.Date.ToString());
+                                    sb.AppendLine("Status: " + charter.CharterStatus.ToString());
+
+                                    if (charter.CharterStatus == CharterStatusExportType.Approved ||
+                                        charter.CharterStatus == CharterStatusExportType.Reviewed)
+                                    {
+                                        apires.SetData("ContractGUID", charter.CharterGUID);
+                                        apires.SetData("ContractVersionGUID", charter.CharterVersionGUID);
+                                    }
                                 }
                                 else
                                 {
