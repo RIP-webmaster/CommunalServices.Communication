@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ApiRequests\ExportContractApiRequest.cs" />
     <Compile Include="ApiRequests\ExportWorkingListApiRequest.cs" />
+    <Compile Include="ApiRequests\ImportContractTarifApiRequest.cs" />
     <Compile Include="ApiRequests\ImportDebtInfoApiRequest.cs" />
     <Compile Include="ApiRequests\ImportWorkingListApiRequest.cs" />
     <Compile Include="ApiRequests\ImportWorkingPlanApiRequest.cs" />

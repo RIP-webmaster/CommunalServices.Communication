@@ -28,6 +28,10 @@ namespace CommunalServices.Communication.Data
         /// </summary>
         public string HouseAddress { get; set; }
 
+        public string ContractVersionGUID { get; set; }
+
+        public string ContractObjectVersionGUID { get; set; }
+
         /// <summary>
         /// Наименование услуги в справочнике работ организации
         /// </summary>

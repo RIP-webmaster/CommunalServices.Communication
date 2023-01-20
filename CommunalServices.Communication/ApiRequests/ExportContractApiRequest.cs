@@ -174,6 +174,12 @@ namespace CommunalServices.Communication.ApiRequests
                                     sb.AppendLine("SigningDate: " + contract.SigningDate.ToString());
                                     sb.AppendLine("Status: " + contract.ContractStatus.ToString());
 
+                                    if (contract.ContractObject != null && contract.ContractObject.Length == 1)
+                                    {
+                                        sb.AppendLine("ContractObjectVersionGUID: " + contract.ContractObject[0].ContractObjectVersionGUID);
+                                        apires.SetData("ContractObjectVersionGUID", contract.ContractObject[0].ContractObjectVersionGUID);
+                                    }
+                                    
                                     if (contract.ContractStatus == ContractStatusExportType.Approved ||
                                         contract.ContractStatus == ContractStatusExportType.Reviewed)
                                     {
@@ -189,6 +195,12 @@ namespace CommunalServices.Communication.ApiRequests
                                     sb.AppendLine("Date: " + charter.Date.ToString());
                                     sb.AppendLine("Status: " + charter.CharterStatus.ToString());
 
+                                    if (charter.ContractObject != null && charter.ContractObject.Length == 1)
+                                    {
+                                        sb.AppendLine("ContractObjectVersionGUID: " + charter.ContractObject[0].ContractObjectVersionGUID);
+                                        apires.SetData("ContractObjectVersionGUID", charter.ContractObject[0].ContractObjectVersionGUID);
+                                    }
+
                                     if (charter.CharterStatus == CharterStatusExportType.Approved ||
                                         charter.CharterStatus == CharterStatusExportType.Reviewed)
                                     {
@@ -199,6 +211,22 @@ namespace CommunalServices.Communication.ApiRequests
                                 else
                                 {
                                     sb.AppendLine(cach.Item.GetType().ToString());
+                                }
+                            }
+                            else if (item is getStateResultImportResult)
+                            {
+                                var ires = (getStateResultImportResult)item;
+                                if (ires.Items == null) ires.Items = new object[0];
+
+                                sb.AppendLine("getStateResultImportResult, items: " + ires.Items.Length.ToString());
+
+                                foreach (object x in ires.Items)
+                                {
+                                    if (x is ErrorMessageType)
+                                    {
+                                        sb.AppendLine("-Error: " + (x as ErrorMessageType).Description);
+                                    }
+                                    else sb.AppendLine("-"+x.GetType().ToString());
                                 }
                             }
                             else if (item is CommonResultType)
