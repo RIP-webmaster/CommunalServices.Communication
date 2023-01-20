@@ -172,6 +172,8 @@ namespace CommunalServices.Communication.ApiRequests
                                     sb.AppendLine("ContractVersionGUID: " + contract.ContractVersionGUID);
                                     sb.AppendLine("DocNum: " + contract.DocNum);
                                     sb.AppendLine("SigningDate: " + contract.SigningDate.ToString());
+                                    apires.SetData("ContractGUID", contract.ContractGUID);
+                                    apires.SetData("ContractVersionGUID", contract.ContractVersionGUID);
                                 }
                                 else
                                 {

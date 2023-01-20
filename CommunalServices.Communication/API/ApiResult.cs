@@ -10,6 +10,8 @@ namespace GISGKHIntegration
 {
     public class ApiResult:ApiResultBase
     {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+
         //get state result
         public List<ApiResultEntry> entries = new List<ApiResultEntry>();
 
@@ -37,6 +39,18 @@ namespace GISGKHIntegration
             this.text = t;
             this.exception = true;
             this.ex = e;
+        }
+
+        public void SetData(string name, string val)
+        {
+            this.data[name] = val;
+        }
+
+        public string GetData(string name)
+        {
+            string ret;
+            if (this.data.TryGetValue(name, out ret)) return ret;
+            else return null;
         }
 
         public override string ToString()
