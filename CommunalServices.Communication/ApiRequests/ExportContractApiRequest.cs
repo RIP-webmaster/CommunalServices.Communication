@@ -47,6 +47,7 @@ namespace CommunalServices.Communication.ApiRequests
                 
                 var request = new exportCAChAsyncRequest();
                 request.Id = "signed-data-container";
+                request.version = "13.1.2.1";
 
                 //критерии
                 List<object> itemsList = new List<object>(3);
