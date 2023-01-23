@@ -47,13 +47,13 @@ namespace CommunalServices.Communication.ApiRequests
 
                 var request = new exportVotingProtocolRequest();
                 request.Id = "signed-data-container";
-                /*request.version = "13.1.0.4";*/
+                request.version = "13.1.0.4";
                 request.Items = new object[2];
-                request.ItemsElementName = new ItemsChoiceType34[2];
+                request.ItemsElementName = new ItemsChoiceType35[2];
                 request.Items[0] = this.HouseGuid;
                 request.Items[1] = exportVotingProtocolRequestStatusVersionProtocol.Posted;
-                request.ItemsElementName[0] = ItemsChoiceType34.FIASHouseGuid;
-                request.ItemsElementName[1] = ItemsChoiceType34.StatusVersionProtocol;
+                request.ItemsElementName[0] = ItemsChoiceType35.FIASHouseGuid;
+                request.ItemsElementName[1] = ItemsChoiceType35.StatusVersionProtocol;
 
                 try
                 {

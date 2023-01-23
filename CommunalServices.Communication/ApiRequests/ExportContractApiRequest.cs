@@ -50,13 +50,13 @@ namespace CommunalServices.Communication.ApiRequests
 
                 //критерии
                 List<object> itemsList = new List<object>(3);
-                List<ItemsChoiceType35> choicesList = new List<ItemsChoiceType35>(3);
+                List<ItemsChoiceType37> choicesList = new List<ItemsChoiceType37>(3);
                 itemsList.Add(orgPPAGUID);
-                choicesList.Add(ItemsChoiceType35.UOGUID);
+                choicesList.Add(ItemsChoiceType37.UOGUID);
                 itemsList.Add(houseGuid);
-                choicesList.Add(ItemsChoiceType35.FIASHouseGuid);
+                choicesList.Add(ItemsChoiceType37.FIASHouseGuid);
                 itemsList.Add(true);
-                choicesList.Add(ItemsChoiceType35.LastVersionOnly);
+                choicesList.Add(ItemsChoiceType37.LastVersionOnly);
                 exportCAChRequestCriteriaType crit = new exportCAChRequestCriteriaType();
                 crit.Items = itemsList.ToArray();
                 crit.ItemsElementName = choicesList.ToArray();

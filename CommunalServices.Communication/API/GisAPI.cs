@@ -97,7 +97,7 @@ namespace GISGKHIntegration
 
                     var request = new exportAccountRequest();
                     request.Id = "signed-data-container";
-                    request.ItemsElementName = new ItemsChoiceType30[] { ItemsChoiceType30.FIASHouseGuid };
+                    request.ItemsElementName = new ItemsChoiceType31[] { ItemsChoiceType31.FIASHouseGuid };
                     request.Items = new string[] { house_guid };
                     //284f62c1-c88d-43b3-aebe-db755b57665d
 
@@ -331,19 +331,20 @@ namespace GISGKHIntegration
 
                     exportMeteringDeviceHistoryRequest request = new exportMeteringDeviceHistoryRequest();
                     request.Id = "signed-data-container";
-                                        
+                    request.version = "10.0.1.1";
+                    
                     request.ExcludePersonAsDataSourceSpecified = false;
                     request.ExcludePersonAsDataSource = false;
                     request.ExcludeCurrentOrgAsDataSource = true;
                     request.ExcludeCurrentOrgAsDataSourceSpecified = true;
 
                     request.FIASHouseGuid = new string[]{house_guid};
-                    request.ItemsElementName = new ItemsChoiceType15[] { ItemsChoiceType15.MeteringDeviceType };
+                    request.ItemsElementName = new ItemsChoiceType16[] { ItemsChoiceType16.MeteringDeviceType };
                     request.Items = new object[] { new nsiRef() { Code = "1", GUID = "3E86B303-62BE-4837-91C1-ED2475702C65".ToLower() } };
 
                     
                     request.inputDateFrom = new DateTime(god, mes, 1); request.inputDateFromSpecified = true;
-                    request.inputDateTo = new DateTime(god, mes, 20); request.inputDateToSpecified = true;
+                    request.inputDateTo = new DateTime(god, mes, 27); request.inputDateToSpecified = true;
 
                     try
                     {
@@ -2003,7 +2004,7 @@ namespace GISGKHIntegration
                         //тело запроса
                         exportPaymentDocumentDetailsRequest body = new exportPaymentDocumentDetailsRequest();
                         body.Id = "signed-data-container";
-                        body.ItemsElementName = new ItemsChoiceType52[] { ItemsChoiceType52.PaymentDocumentID };
+                        body.ItemsElementName = new ItemsChoiceType58[] { ItemsChoiceType58.PaymentDocumentID };
 
                         body.Items = new object[] { id };
                         //"00ВА398944-01-7042"
@@ -2071,10 +2072,10 @@ namespace GISGKHIntegration
                         //тело запроса
                         exportPaymentDocumentDetailsRequest body = new exportPaymentDocumentDetailsRequest();
                         body.Id = "signed-data-container";
-                        body.ItemsElementName = new ItemsChoiceType52[] { 
-                            ItemsChoiceType52.Year, 
-                            ItemsChoiceType52.Month,
-                            ItemsChoiceType52.ServiceID
+                        body.ItemsElementName = new ItemsChoiceType58[] { 
+                            ItemsChoiceType58.Year, 
+                            ItemsChoiceType58.Month,
+                            ItemsChoiceType58.ServiceID
                         };
 
                         body.Items = new object[] { (short)god, mes, gkuid };                        
@@ -2466,7 +2467,7 @@ namespace GISGKHIntegration
                         getStateRequest body = new getStateRequest();
                         body.MessageGUID = message_guid;
 
-                        getStateResult6 res;//переменная для результата
+                        getStateResult7 res;//переменная для результата
                         long t1 = Environment.TickCount;
                         GisAPI.DisableSignature = true;//запрос не подписывается
 
@@ -2520,14 +2521,24 @@ namespace GISGKHIntegration
                                 getStateResultExportPaymentDocumentDetailsResult x =
                                     (item as getStateResultExportPaymentDocumentDetailsResult);
                                 
-                                int j = 0;                                
-                                sb.AppendLine("Total length: " + (x).Charge.Length);                                
+                                int j = 0;
+
+                                getStateResultExportPaymentDocumentDetailsResultCharge charge;
+                                PaymentDocument[] docs;
+
+                                if(x.Items.Length>0 && x.Items[0] is getStateResultExportPaymentDocumentDetailsResultCharge)
+                                {
+                                    charge = (getStateResultExportPaymentDocumentDetailsResultCharge)x.Items[0];
+                                    docs = charge.PaymentDocument;
+                                }
+                                else docs = new PaymentDocument[0];
+
+                                sb.AppendLine("Total length: " + docs.Length);                                
                                 sb.AppendLine();
                                 apires.error = false;
                                 
-
                                 //обработка платежных документов
-                                foreach (PaymentDocument p in (x).Charge)
+                                foreach (PaymentDocument p in docs)
                                 {
                                     entry = new ApiResultEntry();
                                     entry.IsPayDocument = true;
@@ -2546,8 +2557,7 @@ namespace GISGKHIntegration
                                     sb.AppendLine("LS: " + p.AccountNumber);
                                     entry.LS = p.AccountNumber;
                                     var pitem = p.PaymentDocumentDetails;
-
-                                    
+                                                                        
                                     {
                                         sb.AppendLine("Details");
                                         PaymentDocumentDetailsType det = pitem as PaymentDocumentDetailsType;
@@ -2555,20 +2565,7 @@ namespace GISGKHIntegration
                                         entry.sum = (det.Reminder / 100.0M);
                                         sb.AppendLine("Purpose: " + det.Purpose);
                                         entry.purpose = det.Purpose;
-
-                                        if (det.Item != null)
-                                        {
-                                            if (det.Item is decimal)
-                                            {
-                                                sb.AppendLine("Debt: " + ((decimal)(det.Item) / 100.0M).ToString());
-                                            }
-                                            else
-                                            {
-                                                sb.AppendLine(det.Item.ToString());
-                                            }
-                                        }
-                                        else sb.AppendLine("det.item is null");
-
+                                        
                                         if (det.ExecutorInformation.Item != null)
                                         {
                                             PaymentDocumentDetailsTypeExecutorInformationLegal executor;

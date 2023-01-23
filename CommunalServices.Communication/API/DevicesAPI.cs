@@ -39,7 +39,7 @@ namespace GISGKHIntegration
                     exportMeteringDeviceDataRequest request = new exportMeteringDeviceDataRequest();
                     request.Id = "signed-data-container";
                     request.Items = new object[] { house_guid };
-                    request.ItemsElementName = new ItemsChoiceType16[] { ItemsChoiceType16.FIASHouseGuid };
+                    request.ItemsElementName = new ItemsChoiceType17[] { ItemsChoiceType17.FIASHouseGuid };
 
                     try
                     {
@@ -350,7 +350,7 @@ namespace GISGKHIntegration
                         if (item.Resource == "Электрическая энергия")
                         {
                             var electric = new importMeteringDeviceValuesRequestMeteringDevicesValuesElectricDeviceValue();
-                            electric.CurrentValue = new ElectricMeteringValueImportType();
+                            electric.CurrentValue = new importMeteringDeviceValuesRequestMeteringDevicesValuesElectricDeviceValueCurrentValue();
                             electric.CurrentValue.TransportGUID = transportGUID;
                             electric.CurrentValue.DateValue = item.DatePkz;
 
@@ -364,8 +364,8 @@ namespace GISGKHIntegration
                         else
                         {
                             var x = new importMeteringDeviceValuesRequestMeteringDevicesValuesOneRateDeviceValue();
-                            x.CurrentValue = new OneRateMeteringValueImportType[] {
-                                new OneRateMeteringValueImportType()
+                            x.CurrentValue = new importMeteringDeviceValuesRequestMeteringDevicesValuesOneRateDeviceValueCurrentValue[] {
+                                new importMeteringDeviceValuesRequestMeteringDevicesValuesOneRateDeviceValueCurrentValue()
                             };
                             x.CurrentValue[0].DateValue = item.DatePkz;
                             x.CurrentValue[0].MunicipalResource = new nsiRef();
