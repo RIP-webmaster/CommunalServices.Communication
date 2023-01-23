@@ -226,8 +226,33 @@ namespace CommunalServices.Communication.ApiRequests
                                     {
                                         sb.AppendLine("-Error: " + (x as ErrorMessageType).Description);
                                     }
-                                    else sb.AppendLine("-"+x.GetType().ToString());
+                                    else if (x is getStateResultImportResultCommonResult)
+                                    {
+                                        var rcr = (getStateResultImportResultCommonResult)x;
+                                        if (rcr.Items == null) rcr.Items = new object[0];
+
+                                        foreach (object y in rcr.Items)
+                                        {
+                                            if (y is CommonResultTypeError)
+                                            {
+                                                sb.AppendLine("--Error: " + (y as CommonResultTypeError).Description);
+                                            }
+                                            else sb.AppendLine("--" + y.GetType().ToString());
+                                        }
+                                    }
+                                    else sb.AppendLine("-" + x.GetType().ToString());
                                 }
+                            }
+                            else if (item is exportVotingProtocolResultType)
+                            {
+                                var vprt = (exportVotingProtocolResultType)item;
+                                sb.AppendLine("* exportVotingProtocolResultType *");
+                                sb.AppendLine("VotingProtocolGUID: " + vprt.VotingProtocolGUID);
+                                sb.AppendLine("RootProtocolGUID: " + vprt.RootProtocolGUID);
+                                sb.AppendLine("ProtocolDate: " + vprt.ProtocolDate.ToString());
+                                sb.AppendLine("ProtocolNum: " + vprt.ProtocolNum);
+                                sb.AppendLine("StatusProtocol: " + vprt.StatusProtocol);
+                                sb.AppendLine("StatusVersionProtocol: " + vprt.StatusVersionProtocol);
                             }
                             else if (item is CommonResultType)
                             {
