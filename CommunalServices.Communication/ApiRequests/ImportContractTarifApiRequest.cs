@@ -17,7 +17,7 @@ namespace CommunalServices.Communication.ApiRequests
     public class ImportContractTarifApiRequest : ApiRequestBase
     {
         public ImportContractTarifApiRequest(string orgPPAGUID, int k_post, string houseGuid, string contractVersionGuid, 
-            DateTime dtStart, DateTime dtEnd, HouseUslData[] items, bool voting)
+            DateTime dtStart, DateTime dtEnd, HouseUslData[] items, bool voting, string protocolGuid)
         {
             this.OrgPpaGuid = orgPPAGUID;
             this.KPost = k_post;
@@ -27,6 +27,7 @@ namespace CommunalServices.Communication.ApiRequests
             this.End = dtEnd;
             this.Items = items;
             this.IsByVoting = voting;
+            this.ProtocolGUID = protocolGuid;
         }
 
         public string HouseGUID { get; set; }
@@ -35,6 +36,7 @@ namespace CommunalServices.Communication.ApiRequests
         public DateTime End { get; set; }
         public HouseUslData[] Items { get; set; }
         public bool IsByVoting { get; set; }
+        public string ProtocolGUID { get; set; }
 
         public override ApiResultBase Send()
         {
@@ -64,7 +66,13 @@ namespace CommunalServices.Communication.ApiRequests
                 info.BeginDate = this.Start;
                 info.EndDate = this.End;
                 info.ContractVersionGUID = this.ContractVersionGUID;
-                info.Items = new object[0];
+
+                if (this.IsByVoting && !string.IsNullOrEmpty(this.ProtocolGUID))
+                {
+                    //протокол собрания собственников - основание для тарифа
+                    info.Items = new object[1];
+                    info.Items[0] = this.ProtocolGUID;
+                }
 
                 if (this.IsByVoting) info.Type = ContractPaymentsInfoTypeType.P;
                 else info.Type = ContractPaymentsInfoTypeType.C;
@@ -105,7 +113,7 @@ namespace CommunalServices.Communication.ApiRequests
                 }
                 else
                 {
-                    info.HouseManagementPaymentSize = 0.2M * tarifSod; //цена за услуги управления УК - условно 20% от содержания
+                    info.HouseManagementPaymentSize = Math.Round(0.2M * tarifSod, 2); //цена за услуги управления УК - условно 20% от содержания
                 }
 
                 contract.Item = info;
