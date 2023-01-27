@@ -237,6 +237,10 @@ namespace CommunalServices.Communication.ApiRequests
                                             if (y is CommonResultTypeError)
                                             {
                                                 sb.AppendLine("--Error: " + (y as CommonResultTypeError).Description);
+                                                apires.error = true;
+                                                apires.ErrorCode = (y as CommonResultTypeError).ErrorCode;
+                                                apires.ErrorMessage = (y as CommonResultTypeError).Description;
+                                                apires.StackTrace = (y as CommonResultTypeError).StackTrace;
                                             }
                                             else sb.AppendLine("--" + y.GetType().ToString());
                                         }
