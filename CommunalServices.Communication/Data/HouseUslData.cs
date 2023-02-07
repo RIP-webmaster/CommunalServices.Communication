@@ -28,9 +28,20 @@ namespace CommunalServices.Communication.Data
         /// </summary>
         public string HouseAddress { get; set; }
 
+        /// <summary>
+        /// GUID версии договора управления
+        /// </summary>
         public string ContractVersionGUID { get; set; }
 
+        /// <summary>
+        /// GUID версии управляемого объекта в договоре управления
+        /// </summary>
         public string ContractObjectVersionGUID { get; set; }
+
+        /// <summary>
+        /// Наименование документа, который является основанием для заключения договора управления
+        /// </summary>
+        public string HouseReason { get; set; }
 
         /// <summary>
         /// Наименование услуги в справочнике работ организации
@@ -58,6 +69,21 @@ namespace CommunalServices.Communication.Data
             CultureInfo ci = new CultureInfo(CultureInfo.CurrentCulture.Name);
             ci.NumberFormat.NumberDecimalSeparator = ",";
             return decimal.Parse(areaStr, ci);
+        }
+
+        /// <summary>
+        /// Возвращает true, если основанием для заключения договора управления является протокол общего собрания собственииков
+        /// </summary>
+        public bool IsByVoting
+        {
+            get 
+            {
+                if (this.HouseReason != null)
+                {
+                    return !this.HouseReason.StartsWith("Протокол открытого конкурса");
+                }
+                else return true;
+            }
         }
     }
 }
