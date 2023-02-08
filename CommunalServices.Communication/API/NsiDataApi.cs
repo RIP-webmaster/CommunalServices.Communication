@@ -35,6 +35,9 @@ namespace GISGKHIntegration.API
                     //тело запроса
                     exportDataProviderNsiItemRequest request = new exportDataProviderNsiItemRequest();
                     request.Id = "signed-data-container";
+                    /*request.ModifiedAfter = new DateTime(2022, 11, 1);
+                    request.ModifiedAfterSpecified = true;*/
+
                     switch (number)
                     {
                         case "1": request.RegistryNumber = exportDataProviderNsiItemRequestRegistryNumber.Item1;
