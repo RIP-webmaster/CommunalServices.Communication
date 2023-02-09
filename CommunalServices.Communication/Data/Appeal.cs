@@ -18,11 +18,60 @@ namespace GISGKHIntegration.Data
         public string Text { get; set; }
         public string FIO { get; set; }
         public string Addr { get; set; }
+        public string HouseGUID { get; set; }
         public string EMail { get; set; }
         public string Phone { get; set; }
         public string FilesText { get; set; }
         public int OrgCode { get; set; }
         public DateTime? DateForwarded { get; set; }
+
+        static string GetAddress(string houseGUID)
+        {
+            SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(
+                DatabaseParams.curr.ConnectionString);
+            b.InitialCatalog = "RIPO_UK";
+            SqlConnection con = new SqlConnection(b.ConnectionString);
+            con.Open();
+
+            using (con)
+            {
+                SqlCommand cmd;
+                cmd = new SqlCommand("SELECT street, nhouse, nkor FROM houses WHERE house_guid=@houseGUID", con);
+                cmd.Parameters.AddWithValue("houseGUID", houseGUID);
+                StringBuilder sb = new StringBuilder(500);
+                SqlDataReader rd = cmd.ExecuteReader();
+
+                using (rd)
+                {
+                    if (rd.Read())
+                    {
+                        if (!rd.IsDBNull(rd.GetOrdinal("street")))
+                        {
+                            sb.Append(rd["street"].ToString());
+                            sb.Append(", ");
+                        }
+
+                        if (!rd.IsDBNull(rd.GetOrdinal("nhouse")))
+                        {
+                            sb.Append("д. ");
+                            sb.Append(rd["nhouse"].ToString());
+                        }
+
+                        if (!rd.IsDBNull(rd.GetOrdinal("nkor")))
+                        {
+                            string kor = rd["nkor"].ToString();
+
+                            if (!string.IsNullOrWhiteSpace(kor))
+                            {
+                                sb.Append("кор. " + kor);
+                            }
+                        }
+                    }
+                }
+
+                return sb.ToString();
+            }
+        }
 
         public int AddToBase()
         {
@@ -31,6 +80,12 @@ namespace GISGKHIntegration.Data
             object val;
             int c;
             int n = 0;
+
+            if (string.IsNullOrEmpty(this.Addr) && !string.IsNullOrEmpty(this.HouseGUID))
+            {
+                //если в обращении не указан адрес, попытаемся определить его по GUID дома
+                this.Addr = GetAddress(this.HouseGUID);
+            }
 
             con.Open();
             using (con)
@@ -290,7 +345,7 @@ FROM appeals ORDER BY date_created DESC", con);
         {
             StringBuilder sb = new StringBuilder(5000);
 
-            sb.AppendFormat("Обращение №{0} от {1}\n",this.Number,this.DateCreated);
+            sb.AppendFormat("Обращение №{0} от {1}\n", this.Number, this.DateCreated.ToShortDateString());
             sb.AppendLine();
 
             if (this.FIO != null)

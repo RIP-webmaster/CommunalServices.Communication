@@ -258,6 +258,8 @@ namespace GKH.Appeals
                                         if (addr_kv.Length > 0) entry.Addr += ", кв. "+addr_kv;
                                     }
 
+                                    entry.HouseGUID = appeal.FIASHouseGuid;
+
                                     sb.AppendLine("Текст обращения:");
                                     sb.AppendLine(appeal.AppealText);
                                                                         
