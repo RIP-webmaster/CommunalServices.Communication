@@ -174,18 +174,18 @@ namespace CommunalServices.Communication.ApiRequests
                                     sb.AppendLine("DocNum: " + contract.DocNum);
                                     sb.AppendLine("SigningDate: " + contract.SigningDate.ToString());
                                     sb.AppendLine("Status: " + contract.ContractStatus.ToString());
-
-                                    if (contract.ContractObject != null && contract.ContractObject.Length == 1)
-                                    {
-                                        sb.AppendLine("ContractObjectVersionGUID: " + contract.ContractObject[0].ContractObjectVersionGUID);
-                                        apires.SetData("ContractObjectVersionGUID", contract.ContractObject[0].ContractObjectVersionGUID);
-                                    }
                                     
                                     if (contract.ContractStatus == ContractStatusExportType.Approved ||
                                         contract.ContractStatus == ContractStatusExportType.Reviewed)
                                     {
                                         apires.SetData("ContractGUID", contract.ContractGUID);
                                         apires.SetData("ContractVersionGUID", contract.ContractVersionGUID);
+
+                                        if (contract.ContractObject != null && contract.ContractObject.Length == 1)
+                                        {
+                                            sb.AppendLine("ContractObjectVersionGUID: " + contract.ContractObject[0].ContractObjectVersionGUID);
+                                            apires.SetData("ContractObjectVersionGUID", contract.ContractObject[0].ContractObjectVersionGUID);
+                                        }
                                     }
                                 }
                                 else if (cach.Item is exportCAChResultTypeCharter)
@@ -196,17 +196,17 @@ namespace CommunalServices.Communication.ApiRequests
                                     sb.AppendLine("Date: " + charter.Date.ToString());
                                     sb.AppendLine("Status: " + charter.CharterStatus.ToString());
 
-                                    if (charter.ContractObject != null && charter.ContractObject.Length == 1)
-                                    {
-                                        sb.AppendLine("ContractObjectVersionGUID: " + charter.ContractObject[0].ContractObjectVersionGUID);
-                                        apires.SetData("ContractObjectVersionGUID", charter.ContractObject[0].ContractObjectVersionGUID);
-                                    }
-
                                     if (charter.CharterStatus == CharterStatusExportType.Approved ||
                                         charter.CharterStatus == CharterStatusExportType.Reviewed)
                                     {
                                         apires.SetData("ContractGUID", charter.CharterGUID);
                                         apires.SetData("ContractVersionGUID", charter.CharterVersionGUID);
+
+                                        if (charter.ContractObject != null && charter.ContractObject.Length == 1)
+                                        {
+                                            sb.AppendLine("ContractObjectVersionGUID: " + charter.ContractObject[0].ContractObjectVersionGUID);
+                                            apires.SetData("ContractObjectVersionGUID", charter.ContractObject[0].ContractObjectVersionGUID);
+                                        }
                                     }
                                 }
                                 else
