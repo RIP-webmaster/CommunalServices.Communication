@@ -19,13 +19,14 @@ namespace GISGKHIntegration.Data
         public string FIO { get; set; }
         public string Addr { get; set; }
         public string HouseGUID { get; set; }
+        public string NKV { get; set; }
         public string EMail { get; set; }
         public string Phone { get; set; }
         public string FilesText { get; set; }
         public int OrgCode { get; set; }
         public DateTime? DateForwarded { get; set; }
 
-        static string GetAddress(string houseGUID)
+        static string GetAddress(string houseGUID, string nkv)
         {
             SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(
                 DatabaseParams.curr.ConnectionString);
@@ -69,6 +70,11 @@ namespace GISGKHIntegration.Data
                     }
                 }
 
+                if (!string.IsNullOrEmpty(nkv))
+                {
+                    sb.Append(", кв. " + nkv);
+                }
+
                 return sb.ToString();
             }
         }
@@ -84,7 +90,7 @@ namespace GISGKHIntegration.Data
             if (string.IsNullOrEmpty(this.Addr) && !string.IsNullOrEmpty(this.HouseGUID))
             {
                 //если в обращении не указан адрес, попытаемся определить его по GUID дома
-                this.Addr = GetAddress(this.HouseGUID);
+                this.Addr = GetAddress(this.HouseGUID, this.NKV);
             }
 
             con.Open();
