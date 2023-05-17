@@ -188,6 +188,7 @@ namespace GKH.Appeals
                                     }
 
                                     entry.Topic = topic;
+                                    entry.SenderRootEntityGUID = string.Empty;
                                     string addr_house = "";
                                     string addr_kv = "";
                                     
@@ -237,6 +238,16 @@ namespace GKH.Appeals
                                                 {
                                                     entry.Phone = appeal.ApplicantInfo.Items[j].ToString();
                                                     sb.AppendLine(entry.Phone);
+                                                }
+                                                else sb.AppendLine(appeal.ApplicantInfo.Items[j].GetType().ToString());
+                                                break;
+                                            case ItemsChoiceType3.Org:
+                                                sb.AppendLine("Организация: ");
+                                                if (appeal.ApplicantInfo.Items[j] is RegOrgType)
+                                                {
+                                                    RegOrgType orgData = (RegOrgType)appeal.ApplicantInfo.Items[j];
+                                                    entry.SenderRootEntityGUID = orgData.orgRootEntityGUID;
+                                                    sb.AppendLine(orgData.orgRootEntityGUID);
                                                 }
                                                 else sb.AppendLine(appeal.ApplicantInfo.Items[j].GetType().ToString());
                                                 break;

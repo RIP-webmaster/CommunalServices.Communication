@@ -25,6 +25,7 @@ namespace GISGKHIntegration.Data
         public string FilesText { get; set; }
         public int OrgCode { get; set; }
         public DateTime? DateForwarded { get; set; }
+        public string SenderRootEntityGUID { get; set; }
 
         static string GetAddress(string houseGUID, string nkv)
         {
@@ -356,7 +357,7 @@ FROM appeals ORDER BY date_created DESC", con);
 
             if (this.FIO != null)
             {
-                sb.AppendFormat("ФИО заявителя: {0}\n", this.FIO);
+                sb.AppendFormat("Заявитель: {0}\n", this.FIO);
             }
 
             if (this.Addr != null)
@@ -404,7 +405,7 @@ FROM appeals ORDER BY date_created DESC", con);
 
             if (this.FIO != null)
             {
-                sb.AppendFormat("<b>ФИО заявителя:</b> {0}<br/>\n", WebUtility.HtmlEncode(this.FIO));
+                sb.AppendFormat("<b>Заявитель:</b> {0}<br/>\n", WebUtility.HtmlEncode(this.FIO));
             }
 
             if (this.Addr != null)
