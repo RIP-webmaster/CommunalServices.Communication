@@ -1592,6 +1592,7 @@ ErrorCode=@ErrorCode, ErrorMessage=@ErrorMessage, StackTrace=@StackTrace, DateCh
                     case "Г/В": t_s23_knam += " счетчик горячей воды"; break;
                     case "Х/В": t_s23_knam += " счетчик холодной воды"; break;
                     case "ЭЛ.2": t_s23_knam += " эл. счетчик 2 тариф."; break;
+                    case "ЭЛ.2 Н": t_s23_knam += " эл. счетчик 2 тариф."; break;
                     case "ЭЛ.1": t_s23_knam += " эл. счетчик 1 тариф."; break;
                     case "ОТОПЛ": t_s23_knam += " счетчик отопления"; break;
                 }
