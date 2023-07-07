@@ -340,8 +340,10 @@ namespace GISGKHIntegration
 
                     request.FIASHouseGuid = new string[]{house_guid};
                     request.ItemsElementName = new ItemsChoiceType16[] { ItemsChoiceType16.MeteringDeviceType };
-                    request.Items = new object[] { new nsiRef() { Code = "1", GUID = "3E86B303-62BE-4837-91C1-ED2475702C65".ToLower() } };
 
+                    request.Items = new object[] { 
+                        new nsiRef() { Code = DB.PU_TYPE_INDIVIDUAL_CODE, GUID = DB.PU_TYPE_INDIVIDUAL_GUID } 
+                    };
                     
                     request.inputDateFrom = new DateTime(god, mes, 1); request.inputDateFromSpecified = true;
                     request.inputDateTo = new DateTime(god, mes, 27); request.inputDateToSpecified = true;
@@ -519,7 +521,7 @@ namespace GISGKHIntegration
                                             pkz.n_pkz = 1;
                                             pkz.DeviceGUID = x.MeteringDeviceRootGUID;
                                             pkz.Source = z.ReadingsSource;
-                                            pkz.ResourceGUID = "424C6769-51A7-43B4-8D26-FDCBE7A7D9F4".ToLower();
+                                            pkz.ResourceGUID = DB.RESOURCE_ELECTR_GUID;
                                             pkz.DatePkz = z.DateValue;
                                             pkz.Value = Convert.ToDecimal(z.MeteringValueT1);
                                             pkz.HouseGUID = house_guid;
@@ -532,7 +534,7 @@ namespace GISGKHIntegration
                                                 pkz.n_pkz = 2;
                                                 pkz.DeviceGUID = x.MeteringDeviceRootGUID;
                                                 pkz.Source = z.ReadingsSource;
-                                                pkz.ResourceGUID = "424C6769-51A7-43B4-8D26-FDCBE7A7D9F4".ToLower();
+                                                pkz.ResourceGUID = DB.RESOURCE_ELECTR_GUID;
                                                 pkz.DatePkz = z.DateValue;
                                                 pkz.Value = Convert.ToDecimal(z.MeteringValueT2);
                                                 pkz.HouseGUID = house_guid;

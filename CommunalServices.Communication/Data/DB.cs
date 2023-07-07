@@ -26,6 +26,22 @@ namespace GISGKHIntegration
 
         public const int ID_CAP_REMONT = 24;
 
+        // Типы ПУ
+        public const string PU_TYPE_INDIVIDUAL_GUID = "3e86b303-62be-4837-91c1-ed2475702c65"; //Индивидуальный
+        public const string PU_TYPE_INDIVIDUAL_CODE = "1";
+        public const string PU_TYPE_APARTMENT_GUID = "181d8b05-1bf6-45b6-9bcA-92d4d659289f"; //Общий (квартирный)
+        public const string PU_TYPE_APARTMENT_CODE = "3";
+        public const string PU_TYPE_ROOM_GUID = "0864fc5e-c110-4bee-B54e-ff37eb9bb38a"; //Комнатный
+        public const string PU_TYPE_ROOM_CODE = "4";
+
+        // Коммунальные ресурсы
+        public const string RESOURCE_HVS_GUID = "82f90cca-24dc-4ff7-ac66-05e53070e5a3"; //ХВС
+        public const string RESOURCE_HVS_CODE = "1";
+        public const string RESOURCE_GVS_GUID = "7459c9f5-5d7f-42b4-9cd0-6674737d79fa"; //ГВС
+        public const string RESOURCE_GVS_CODE = "2";
+        public const string RESOURCE_ELECTR_GUID = "424c6769-51a7-43b4-8d26-fdcbe7a7d9f4"; //ЭЛ.Э
+        public const string RESOURCE_ELECTR_CODE = "3";
+
         public static string GetStartDate()
         {
             return "20170601";
