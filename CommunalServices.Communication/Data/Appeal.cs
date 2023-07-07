@@ -129,9 +129,10 @@ VALUES (@number,@topic,@date_created,@text,@fio,@addr,@email,@phone,@files_text,
                 {
                     //обновление существующей записи
                     cmd = new SqlCommand(
-                    @"UPDATE ripo_uk.dbo.appeals SET text=@text WHERE number=@number", con);
+                    @"UPDATE ripo_uk.dbo.appeals SET text=@text,fio=@fio WHERE number=@number", con);
                     cmd.Parameters.AddWithValue("number", this.Number);
                     cmd.Parameters.AddWithValue("text", this.Text);
+                    cmd.Parameters.AddWithValue("fio", this.FIO);
                     cmd.ExecuteNonQuery();
 
                     if (this.DateForwarded.HasValue)
