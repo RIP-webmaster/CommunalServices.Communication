@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using GKH;
+using CommunalServices.Communication.Data;
 //06.06.2017
 
 namespace GISGKHIntegration
@@ -308,6 +309,12 @@ namespace GISGKHIntegration
 
         public static ApiResult ExportDevicePkz_Begin(string house_guid, string orgPPAGUID, int god, int mes)
         {
+            return ExportDevicePkz_Begin(house_guid, orgPPAGUID, god, mes, DeviceSelectConditions.Default);
+        }
+
+        public static ApiResult ExportDevicePkz_Begin(string house_guid, string orgPPAGUID, int god, int mes, 
+            DeviceSelectConditions conditions)
+        {
             lock (csLock)
             {
                 LastRequest = ""; LastResponce = "";
@@ -339,12 +346,35 @@ namespace GISGKHIntegration
                     request.ExcludeCurrentOrgAsDataSourceSpecified = true;
 
                     request.FIASHouseGuid = new string[]{house_guid};
-                    request.ItemsElementName = new ItemsChoiceType16[] { ItemsChoiceType16.MeteringDeviceType };
+                    List<ItemsChoiceType16> itemNames = new List<ItemsChoiceType16>(10);
+                    List<object> items = new List<object>(10);
 
-                    request.Items = new object[] { 
-                        new nsiRef() { Code = DB.PU_TYPE_INDIVIDUAL_CODE, GUID = DB.PU_TYPE_INDIVIDUAL_GUID } 
-                    };
-                    
+                    if (conditions.DeviceTypesSpecified)
+                    {
+                        for (int i = 0; i < conditions.DeviceTypeCodes.Length; i++)
+                        {
+                            itemNames.Add(ItemsChoiceType16.MeteringDeviceType);
+                            nsiRef nsi = new nsiRef();
+                            nsi.Code = conditions.DeviceTypeCodes[i];
+                            nsi.GUID = conditions.DeviceTypeGUIDs[i];
+                            items.Add(nsi);
+                        }
+                    }
+
+                    if (conditions.ResourcesSpecified)
+                    {
+                        for (int i = 0; i < conditions.ResourceCodes.Length; i++)
+                        {
+                            itemNames.Add(ItemsChoiceType16.MunicipalResource);
+                            nsiRef nsi = new nsiRef();
+                            nsi.Code = conditions.ResourceCodes[i];
+                            nsi.GUID = conditions.ResourceGUIDs[i];
+                            items.Add(nsi);
+                        }
+                    }
+
+                    request.ItemsElementName = itemNames.ToArray();
+                    request.Items = items.ToArray();
                     request.inputDateFrom = new DateTime(god, mes, 1); request.inputDateFromSpecified = true;
                     request.inputDateTo = new DateTime(god, mes, 27); request.inputDateToSpecified = true;
 
