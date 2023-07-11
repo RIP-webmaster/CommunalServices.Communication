@@ -21,9 +21,9 @@ namespace CommunalServices.Communication.Data
             get 
             {
                 DeviceSelectConditions ret = new DeviceSelectConditions();
-                ret.DeviceTypesSpecified = false;
-                ret.DeviceTypeCodes = new string[] { DB.PU_TYPE_INDIVIDUAL_CODE };
-                ret.DeviceTypeGUIDs = new string[] { DB.PU_TYPE_INDIVIDUAL_GUID };
+                ret.DeviceTypesSpecified = true;
+                ret.DeviceTypeCodes = new string[] { DB.PU_TYPE_INDIVIDUAL_CODE, DB.PU_TYPE_APARTMENT_CODE, DB.PU_TYPE_ROOM_CODE };
+                ret.DeviceTypeGUIDs = new string[] { DB.PU_TYPE_INDIVIDUAL_GUID, DB.PU_TYPE_APARTMENT_GUID, DB.PU_TYPE_ROOM_GUID };
                 return ret;
             }
         }

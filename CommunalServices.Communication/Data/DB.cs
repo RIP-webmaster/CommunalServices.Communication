@@ -29,9 +29,9 @@ namespace GISGKHIntegration
         // Типы ПУ
         public const string PU_TYPE_INDIVIDUAL_GUID = "3e86b303-62be-4837-91c1-ed2475702c65"; //Индивидуальный
         public const string PU_TYPE_INDIVIDUAL_CODE = "1";
-        public const string PU_TYPE_APARTMENT_GUID = "181d8b05-1bf6-45b6-9bcA-92d4d659289f"; //Общий (квартирный)
+        public const string PU_TYPE_APARTMENT_GUID = "181d8b05-1bf6-45b6-9bca-92d4d659289f"; //Общий (квартирный)
         public const string PU_TYPE_APARTMENT_CODE = "3";
-        public const string PU_TYPE_ROOM_GUID = "0864fc5e-c110-4bee-B54e-ff37eb9bb38a"; //Комнатный
+        public const string PU_TYPE_ROOM_GUID = "0864fc5e-c110-4bee-b54e-ff37eb9bb38a"; //Комнатный
         public const string PU_TYPE_ROOM_CODE = "4";
 
         // Коммунальные ресурсы
