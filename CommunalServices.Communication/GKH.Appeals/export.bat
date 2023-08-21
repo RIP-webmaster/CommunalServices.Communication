@@ -1,8 +1,8 @@
 @echo off
 cls
  
-set input1=.\hcs_wsdl_xsd_v.13.1.0.4\appeals2\*.wsdl
-set input2=.\hcs_wsdl_xsd_v.13.1.0.4\appeals2\*.xsd
+set input1=.\hcs_wsdl_xsd_v.13.3.0.0\appeals2\*.wsdl
+set input2=.\hcs_wsdl_xsd_v.13.3.0.0\appeals2\*.xsd
 set output=/out:.\GKHAppealsService 
 set output_config=/config:GKHAppealsService
 set output_namespace=/namespace:*,GKH.Appeals

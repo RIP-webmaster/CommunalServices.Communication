@@ -171,7 +171,7 @@ namespace GKH.Appeals
     public partial class RequestHeader : HeaderType
     {
         
-        private string itemField;
+        private object itemField;
         
         private ItemChoiceType itemElementNameField;
         
@@ -187,10 +187,11 @@ namespace GKH.Appeals
         }
         
         /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Citizen", typeof(RequestHeaderCitizen), Order=0)]
         [System.Xml.Serialization.XmlElementAttribute("SenderID", typeof(string), Order=0)]
         [System.Xml.Serialization.XmlElementAttribute("orgPPAGUID", typeof(string), Order=0)]
         [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemElementName")]
-        public string Item
+        public object Item
         {
             get
             {
@@ -268,15 +269,60 @@ namespace GKH.Appeals
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
     [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://dom.gosuslugi.ru/schema/integration/base/", IncludeInSchema=false)]
-    public enum ItemChoiceType
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://dom.gosuslugi.ru/schema/integration/base/")]
+    public partial class RequestHeaderCitizen : object, System.ComponentModel.INotifyPropertyChanged
     {
         
-        /// <remarks/>
-        SenderID,
+        private object[] itemsField;
+        
+        private ItemsChoiceType5[] itemsElementNameField;
         
         /// <remarks/>
-        orgPPAGUID,
+        [System.Xml.Serialization.XmlElementAttribute("CitizenPPAGUID", typeof(string), Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("Document", typeof(RequestHeaderCitizenDocument), Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute("SNILS", typeof(string), Order=0)]
+        [System.Xml.Serialization.XmlChoiceIdentifierAttribute("ItemsElementName")]
+        public object[] Items
+        {
+            get
+            {
+                return this.itemsField;
+            }
+            set
+            {
+                this.itemsField = value;
+                this.RaisePropertyChanged("Items");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ItemsElementName", Order=1)]
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public ItemsChoiceType5[] ItemsElementName
+        {
+            get
+            {
+                return this.itemsElementNameField;
+            }
+            set
+            {
+                this.itemsElementNameField = value;
+                this.RaisePropertyChanged("ItemsElementName");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
     
     /// <remarks/>
@@ -285,40 +331,129 @@ namespace GKH.Appeals
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://dom.gosuslugi.ru/schema/integration/base/")]
-    public partial class ISCreator : object, System.ComponentModel.INotifyPropertyChanged
+    public partial class RequestHeaderCitizenDocument : object, System.ComponentModel.INotifyPropertyChanged
     {
         
-        private string iSNameField;
+        private RequestHeaderCitizenDocumentDocumentType documentTypeField;
         
-        private string iSOperatorNameField;
+        private string seriesField;
+        
+        private string numberField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
-        public string ISName
+        public RequestHeaderCitizenDocumentDocumentType DocumentType
         {
             get
             {
-                return this.iSNameField;
+                return this.documentTypeField;
             }
             set
             {
-                this.iSNameField = value;
-                this.RaisePropertyChanged("ISName");
+                this.documentTypeField = value;
+                this.RaisePropertyChanged("DocumentType");
             }
         }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=1)]
-        public string ISOperatorName
+        public string Series
         {
             get
             {
-                return this.iSOperatorNameField;
+                return this.seriesField;
             }
             set
             {
-                this.iSOperatorNameField = value;
-                this.RaisePropertyChanged("ISOperatorName");
+                this.seriesField = value;
+                this.RaisePropertyChanged("Series");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Number
+        {
+            get
+            {
+                return this.numberField;
+            }
+            set
+            {
+                this.numberField = value;
+                this.RaisePropertyChanged("Number");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://dom.gosuslugi.ru/schema/integration/base/")]
+    public partial class RequestHeaderCitizenDocumentDocumentType : object, System.ComponentModel.INotifyPropertyChanged
+    {
+        
+        private string codeField;
+        
+        private string gUIDField;
+        
+        private string nameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string Code
+        {
+            get
+            {
+                return this.codeField;
+            }
+            set
+            {
+                this.codeField = value;
+                this.RaisePropertyChanged("Code");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string GUID
+        {
+            get
+            {
+                return this.gUIDField;
+            }
+            set
+            {
+                this.gUIDField = value;
+                this.RaisePropertyChanged("GUID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public string Name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+                this.RaisePropertyChanged("Name");
             }
         }
         
@@ -747,9 +882,155 @@ namespace GKH.Appeals
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://dom.gosuslugi.ru/schema/integration/base/")]
+    public partial class AttachmentWODescriptionType : object, System.ComponentModel.INotifyPropertyChanged
+    {
+        
+        private string nameField;
+        
+        private string descriptionField;
+        
+        private Attachment attachmentField;
+        
+        private string attachmentHASHField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string Name
+        {
+            get
+            {
+                return this.nameField;
+            }
+            set
+            {
+                this.nameField = value;
+                this.RaisePropertyChanged("Name");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string Description
+        {
+            get
+            {
+                return this.descriptionField;
+            }
+            set
+            {
+                this.descriptionField = value;
+                this.RaisePropertyChanged("Description");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public Attachment Attachment
+        {
+            get
+            {
+                return this.attachmentField;
+            }
+            set
+            {
+                this.attachmentField = value;
+                this.RaisePropertyChanged("Attachment");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public string AttachmentHASH
+        {
+            get
+            {
+                return this.attachmentHASHField;
+            }
+            set
+            {
+                this.attachmentHASHField = value;
+                this.RaisePropertyChanged("AttachmentHASH");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://dom.gosuslugi.ru/schema/integration/base/")]
+    public partial class SignedAttachmentType : object, System.ComponentModel.INotifyPropertyChanged
+    {
+        
+        private AttachmentType attachmentField;
+        
+        private AttachmentWODescriptionType[] signatureField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public AttachmentType Attachment
+        {
+            get
+            {
+                return this.attachmentField;
+            }
+            set
+            {
+                this.attachmentField = value;
+                this.RaisePropertyChanged("Attachment");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Signature", Order=1)]
+        public AttachmentWODescriptionType[] Signature
+        {
+            get
+            {
+                return this.signatureField;
+            }
+            set
+            {
+                this.signatureField = value;
+                this.RaisePropertyChanged("Signature");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://dom.gosuslugi.ru/schema/integration/appeals/")]
     public partial class AnswerInfoType : object, System.ComponentModel.INotifyPropertyChanged
     {
+        
+        private string answerGUIDField;
         
         private string answerNumberField;
         
@@ -765,6 +1046,21 @@ namespace GKH.Appeals
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string AnswerGUID
+        {
+            get
+            {
+                return this.answerGUIDField;
+            }
+            set
+            {
+                this.answerGUIDField = value;
+                this.RaisePropertyChanged("AnswerGUID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
         public string AnswerNumber
         {
             get
@@ -779,7 +1075,7 @@ namespace GKH.Appeals
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=2)]
         public System.DateTime SendAnswerDate
         {
             get
@@ -809,7 +1105,7 @@ namespace GKH.Appeals
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
         public AnswerInfoTypeAnswerer Answerer
         {
             get
@@ -824,7 +1120,7 @@ namespace GKH.Appeals
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
         public string AnswerText
         {
             get
@@ -839,7 +1135,7 @@ namespace GKH.Appeals
         }
         
         /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Attachment", Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute("Attachment", Order=5)]
         public AttachmentType[] Attachment
         {
             get
@@ -1253,10 +1549,21 @@ namespace GKH.Appeals
         
         private exportAppealResultTypeAppealWithdrawn appealWithdrawnField;
         
+        private bool fromMobileField;
+        
+        private bool fromMobileFieldSpecified;
+        
+        private System.DateTime executionEndDateField;
+        
+        private bool executionEndDateFieldSpecified;
+        
+        private string nPARequirementsField;
+        
         public exportAppealResultType()
         {
             this.rolledOverField = true;
             this.answerIsNotRequiredField = true;
+            this.fromMobileField = true;
         }
         
         /// <remarks/>
@@ -1563,6 +1870,81 @@ namespace GKH.Appeals
             }
         }
         
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=18)]
+        public bool FromMobile
+        {
+            get
+            {
+                return this.fromMobileField;
+            }
+            set
+            {
+                this.fromMobileField = value;
+                this.RaisePropertyChanged("FromMobile");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool FromMobileSpecified
+        {
+            get
+            {
+                return this.fromMobileFieldSpecified;
+            }
+            set
+            {
+                this.fromMobileFieldSpecified = value;
+                this.RaisePropertyChanged("FromMobileSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="date", Order=19)]
+        public System.DateTime ExecutionEndDate
+        {
+            get
+            {
+                return this.executionEndDateField;
+            }
+            set
+            {
+                this.executionEndDateField = value;
+                this.RaisePropertyChanged("ExecutionEndDate");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ExecutionEndDateSpecified
+        {
+            get
+            {
+                return this.executionEndDateFieldSpecified;
+            }
+            set
+            {
+                this.executionEndDateFieldSpecified = value;
+                this.RaisePropertyChanged("ExecutionEndDateSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=20)]
+        public string NPARequirements
+        {
+            get
+            {
+                return this.nPARequirementsField;
+            }
+            set
+            {
+                this.nPARequirementsField = value;
+                this.RaisePropertyChanged("NPARequirements");
+            }
+        }
+        
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         
         protected void RaisePropertyChanged(string propertyName)
@@ -1674,6 +2056,8 @@ namespace GKH.Appeals
         
         private bool answerIsSentFieldSpecified;
         
+        private SignedAttachmentType[] signedAttachmentsField;
+        
         public exportAppealResultTypeAppealHistoryAnswer()
         {
             this.answerIsSentField = true;
@@ -1706,6 +2090,21 @@ namespace GKH.Appeals
             {
                 this.answerIsSentFieldSpecified = value;
                 this.RaisePropertyChanged("AnswerIsSentSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("SignedAttachments", Order=1)]
+        public SignedAttachmentType[] SignedAttachments
+        {
+            get
+            {
+                return this.signedAttachmentsField;
+            }
+            set
+            {
+                this.signedAttachmentsField = value;
+                this.RaisePropertyChanged("SignedAttachments");
             }
         }
     }
@@ -3706,6 +4105,95 @@ namespace GKH.Appeals
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
     [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://dom.gosuslugi.ru/schema/integration/base/", IncludeInSchema=false)]
+    public enum ItemsChoiceType5
+    {
+        
+        /// <remarks/>
+        CitizenPPAGUID,
+        
+        /// <remarks/>
+        Document,
+        
+        /// <remarks/>
+        SNILS,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://dom.gosuslugi.ru/schema/integration/base/", IncludeInSchema=false)]
+    public enum ItemChoiceType
+    {
+        
+        /// <remarks/>
+        Citizen,
+        
+        /// <remarks/>
+        SenderID,
+        
+        /// <remarks/>
+        orgPPAGUID,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://dom.gosuslugi.ru/schema/integration/base/")]
+    public partial class ISCreator : object, System.ComponentModel.INotifyPropertyChanged
+    {
+        
+        private string iSNameField;
+        
+        private string iSOperatorNameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public string ISName
+        {
+            get
+            {
+                return this.iSNameField;
+            }
+            set
+            {
+                this.iSNameField = value;
+                this.RaisePropertyChanged("ISName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public string ISOperatorName
+        {
+            get
+            {
+                return this.iSOperatorNameField;
+            }
+            set
+            {
+                this.iSOperatorNameField = value;
+                this.RaisePropertyChanged("ISOperatorName");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
+    [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true, Namespace="http://dom.gosuslugi.ru/schema/integration/base/")]
@@ -3861,7 +4349,7 @@ namespace GKH.Appeals
         
         private object[] itemsField;
         
-        private ItemsChoiceType5[] itemsElementNameField;
+        private ItemsChoiceType6[] itemsElementNameField;
         
         private bool includeHCSAppealsField;
         
@@ -3872,7 +4360,6 @@ namespace GKH.Appeals
         public exportAppealRequest()
         {
             this.includeHCSAppealsField = true;
-            this.versionField = "12.2.0.11";
         }
         
         /// <remarks/>
@@ -3905,7 +4392,7 @@ namespace GKH.Appeals
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ItemsElementName", Order=1)]
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public ItemsChoiceType5[] ItemsElementName
+        public ItemsChoiceType6[] ItemsElementName
         {
             get
             {
@@ -4168,7 +4655,7 @@ namespace GKH.Appeals
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://dom.gosuslugi.ru/schema/integration/appeals/", IncludeInSchema=false)]
-    public enum ItemsChoiceType5
+    public enum ItemsChoiceType6
     {
         
         /// <remarks/>
@@ -4364,11 +4851,6 @@ namespace GKH.Appeals
         
         private string versionField;
         
-        public importAnswerRequest()
-        {
-            this.versionField = "12.2.0.13";
-        }
-        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("AnswerAction", Order=0)]
         public importAnswerRequestAnswerAction[] AnswerAction
@@ -4538,7 +5020,7 @@ namespace GKH.Appeals
         
         private object[] itemsField;
         
-        private ItemsChoiceType6[] itemsElementNameField;
+        private ItemsChoiceType7[] itemsElementNameField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Namespace="http://dom.gosuslugi.ru/schema/integration/base/", Order=0)]
@@ -4606,7 +5088,7 @@ namespace GKH.Appeals
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("ItemsElementName", Order=4)]
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public ItemsChoiceType6[] ItemsElementName
+        public ItemsChoiceType7[] ItemsElementName
         {
             get
             {
@@ -4644,6 +5126,8 @@ namespace GKH.Appeals
         
         private AttachmentType[] attachmentField;
         
+        private SignedAttachmentType[] signedAttachmentsField;
+        
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Order=0)]
         public string AnswerText
@@ -4674,6 +5158,21 @@ namespace GKH.Appeals
             }
         }
         
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("SignedAttachments", Order=2)]
+        public SignedAttachmentType[] SignedAttachments
+        {
+            get
+            {
+                return this.signedAttachmentsField;
+            }
+            set
+            {
+                this.signedAttachmentsField = value;
+                this.RaisePropertyChanged("SignedAttachments");
+            }
+        }
+        
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
         
         protected void RaisePropertyChanged(string propertyName)
@@ -4690,7 +5189,7 @@ namespace GKH.Appeals
     [System.CodeDom.Compiler.GeneratedCodeAttribute("svcutil", "4.0.30319.17929")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://dom.gosuslugi.ru/schema/integration/appeals/", IncludeInSchema=false)]
-    public enum ItemsChoiceType6
+    public enum ItemsChoiceType7
     {
         
         /// <remarks/>
