@@ -26,6 +26,7 @@ namespace GISGKHIntegration.Data
         public int OrgCode { get; set; }
         public DateTime? DateForwarded { get; set; }
         public string SenderRootEntityGUID { get; set; }
+        public DateTime? DateExecutionEnd { get; set; }
 
         static string GetAddress(string houseGUID, string nkv)
         {
@@ -109,8 +110,8 @@ namespace GISGKHIntegration.Data
                     //вставка новой записи
                     cmd = new SqlCommand(
 @"INSERT INTO ripo_uk.dbo.appeals 
-([number],[topic],[date_created],[text],[fio],[addr],[email],[phone],[files_text],[k_post],date_forwarded) 
-VALUES (@number,@topic,@date_created,@text,@fio,@addr,@email,@phone,@files_text,@k_post,@date_forwarded)",
+([number],[topic],[date_created],[text],[fio],[addr],[email],[phone],[files_text],[k_post],date_forwarded,date_execution_end) 
+VALUES (@number,@topic,@date_created,@text,@fio,@addr,@email,@phone,@files_text,@k_post,@date_forwarded,@date_execution_end)",
                     con);
                     cmd.Parameters.AddWithValue("number", this.Number);
                     cmd.Parameters.AddWithValue("topic", this.Topic);
@@ -123,6 +124,7 @@ VALUES (@number,@topic,@date_created,@text,@fio,@addr,@email,@phone,@files_text,
                     cmd.Parameters.AddWithValue("files_text", DB.ValueOrEmptyString(this.FilesText));
                     cmd.Parameters.AddWithValue("k_post", this.OrgCode);
                     cmd.Parameters.AddWithValue("date_forwarded",DB.ValueOrNull<DateTime>(this.DateForwarded));
+                    cmd.Parameters.AddWithValue("date_execution_end", DB.ValueOrNull<DateTime>(this.DateExecutionEnd));
                     n += cmd.ExecuteNonQuery();
                 }
                 else
@@ -165,7 +167,7 @@ VALUES (@number,@topic,@date_created,@text,@fio,@addr,@email,@phone,@files_text,
             {
                 SqlCommand cmd;
                 cmd = new SqlCommand(
-@"SELECT [number],[topic],[date_created],[text],[fio],[addr],[email],[phone],[files_text],[k_post],[date_forwarded] 
+@"SELECT [number],[topic],[date_created],[text],[fio],[addr],[email],[phone],[files_text],[k_post],[date_forwarded],[date_execution_end] 
 FROM appeals ORDER BY date_created DESC", con);
                 
                 SqlDataReader rd = cmd.ExecuteReader();
@@ -212,6 +214,12 @@ FROM appeals ORDER BY date_created DESC", con);
                         {
                             val.DateForwarded = (DateTime)rd["date_forwarded"];
                         }
+
+                        if (!rd.IsDBNull(rd.GetOrdinal("date_execution_end")))
+                        {
+                            val.DateExecutionEnd = (DateTime)rd["date_execution_end"];
+                        }
+
                         yield return val;
                     }
                 }

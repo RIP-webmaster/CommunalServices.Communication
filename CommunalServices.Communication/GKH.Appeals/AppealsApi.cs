@@ -170,6 +170,9 @@ namespace GKH.Appeals
                                     entry.DateCreated = appeal.AppealCreateDate;
                                     entry.Text = appeal.AppealText;
 
+                                    //срок исполнения
+                                    if (appeal.ExecutionEndDateSpecified) entry.DateExecutionEnd = appeal.ExecutionEndDate;
+
                                     string topic = "(unknown topic)";
                                     if (appeal.Item != null)
                                     {
