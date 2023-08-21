@@ -1,6 +1,6 @@
 # CommunalServices.Communication
 
-Библиотека для взаимодействия с API ГИС ЖКХ
+Библиотека для взаимодействия с API ГИС ЖКХ. Основана на коде проекта [springjazzy/Xades](https://github.com/springjazzy/Xades).
 
 Для использования GisAPI необходимо добавить в проект собственный EndpointBehavior для подписания сообщений:
 
