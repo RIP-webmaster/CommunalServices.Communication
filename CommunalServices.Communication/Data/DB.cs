@@ -25,6 +25,7 @@ namespace GISGKHIntegration
         public static object csSync = new object();
 
         public const int ID_CAP_REMONT = 24;
+        public const int ID_SOD = 8;
 
         // Типы ПУ
         public const string PU_TYPE_INDIVIDUAL_GUID = "3e86b303-62be-4837-91c1-ed2475702c65"; //Индивидуальный

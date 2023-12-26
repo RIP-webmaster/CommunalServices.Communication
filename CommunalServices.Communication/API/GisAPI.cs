@@ -1829,7 +1829,16 @@ namespace GISGKHIntegration
                         i = 0;
                         foreach (KvitEntry ent in kvit.entries)
                         {
-                            if (ent.all_nach == 0.0M) continue;
+                            if (ent.all_nach == 0.0M)
+                            {
+                                bool keep = false;
+
+                                //сохраняем нулевые строки содержания
+                                if (ent.usl_id == DB.ID_SOD && k_post != 730) keep = true;
+
+                                if (!keep) continue;
+                            }
+
                             cf = new PaymentDocumentTypeChargeInfo();
 
                             switch (ent.type)
